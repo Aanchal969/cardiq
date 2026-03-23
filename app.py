@@ -89,10 +89,14 @@ SAMPLE_CC_CSV = """Date,Description,Amount,Type
 # CONSTANTS
 # ══════════════════════════════════════════════════════════════
 BANKS = [
-    {"name":"HDFC Bank","abbr":"HDFC"},{"name":"ICICI Bank","abbr":"ICICI"},
-    {"name":"SBI","abbr":"SBI"},{"name":"Axis Bank","abbr":"AXIS"},
-    {"name":"Kotak Bank","abbr":"KOTAK"},{"name":"IndusInd","abbr":"INDUS"},
-    {"name":"Yes Bank","abbr":"YES"},{"name":"IDFC First","abbr":"IDFC"},
+    {"name":"HDFC Bank",  "abbr":"HDFC",  "color":"#004C8F","bg":"#001E3C","emoji":"🏦"},
+    {"name":"ICICI Bank", "abbr":"ICICI", "color":"#F96B21","bg":"#2D1400","emoji":"🏦"},
+    {"name":"SBI",        "abbr":"SBI",   "color":"#2251A3","bg":"#0D1B3E","emoji":"🏦"},
+    {"name":"Axis Bank",  "abbr":"AXIS",  "color":"#97144D","bg":"#2D0518","emoji":"🏦"},
+    {"name":"Kotak Bank", "abbr":"KOTAK", "color":"#EF4123","bg":"#2D0A00","emoji":"🏦"},
+    {"name":"IndusInd",   "abbr":"INDUS", "color":"#00529B","bg":"#001E3C","emoji":"🏦"},
+    {"name":"Yes Bank",   "abbr":"YES",   "color":"#00447C","bg":"#001829","emoji":"🏦"},
+    {"name":"IDFC First", "abbr":"IDFC",  "color":"#9B1B30","bg":"#2D0810","emoji":"🏦"},
 ]
 
 CATEGORIES = ["Food Delivery","Groceries","Online Shopping","Travel",
@@ -112,91 +116,128 @@ CARD_BENEFITS = {
 # ══════════════════════════════════════════════════════════════
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+/* ── Variables ── */
+:root {
+  --bg:       #080C14;
+  --bg2:      #0D1220;
+  --bg3:      #121929;
+  --border:   #1E2A3F;
+  --border2:  #253450;
+  --text:     #E2E8F4;
+  --muted:    #4A5A7A;
+  --muted2:   #2A3855;
+  --accent:   #6C8EF5;
+  --green:    #34D399;
+  --amber:    #FBBF24;
+  --coral:    #F87171;
+  --violet:   #A78BFA;
+}
 
 *,*::before,*::after{box-sizing:border-box}
-html,body,[class*="css"],.stApp{background-color:#050505!important;color:#E8E0D0!important;font-family:'Inter',sans-serif!important}
+html,body,[class*="css"],.stApp{background-color:var(--bg)!important;color:var(--text)!important;font-family:'Outfit',sans-serif!important}
 #MainMenu,footer,header{visibility:hidden}
 .block-container{padding:0!important;max-width:100%!important}
 section[data-testid="stSidebar"]{display:none}
 
-.cred-eyebrow{font-size:.58rem;font-weight:500;letter-spacing:.32em;text-transform:uppercase;color:#4A3F30;font-family:'Inter',sans-serif}
-.cred-hero{font-family:'Cormorant Garamond',serif;font-size:clamp(3.5rem,8vw,6rem);font-weight:300;line-height:.92;color:#F5EDD8;letter-spacing:-.02em}
-.cred-hero em{font-style:italic;color:#C9A96E}
-.cred-sub{font-family:'Inter',sans-serif;font-size:.875rem;font-weight:300;color:#4A4238;letter-spacing:.04em;line-height:1.9}
-.cred-section-label{font-size:.58rem;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:#3A3228;margin-bottom:1.5rem;padding-bottom:.75rem;border-bottom:1px solid #130F0A}
+/* ── Typography ── */
+.iq-eyebrow{font-size:.6rem;font-weight:500;letter-spacing:.3em;text-transform:uppercase;color:var(--muted)}
+.iq-hero{font-family:'Playfair Display',serif;font-size:clamp(2.8rem,6vw,4.5rem);font-weight:400;line-height:1;color:var(--text);letter-spacing:-.01em}
+.iq-hero em{font-style:italic;color:var(--accent)}
+.iq-sub{font-size:.875rem;font-weight:300;color:var(--muted);line-height:1.8}
+.iq-label{font-size:.58rem;font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:var(--muted2);margin-bottom:1.25rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)}
 
-.cred-hero-section{padding:2.5rem 6rem 2rem;border-bottom:1px solid #0F0D0A;position:relative;overflow:hidden}
-.cred-hero-section::after{content:'';position:absolute;top:-100px;right:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(201,169,110,.05) 0%,transparent 65%);pointer-events:none}
-.cred-body-section{padding:2rem 6rem}
-.cred-divider{height:1px;background:#0F0D0A}
+/* ── Layout ── */
+.iq-hero-wrap{padding:2.5rem 5rem 2rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;position:relative;overflow:hidden}
+.iq-hero-wrap::before{content:'';position:absolute;top:-60px;right:5rem;width:360px;height:360px;background:radial-gradient(circle,rgba(108,142,245,.08) 0%,transparent 70%);pointer-events:none}
+.iq-body{padding:2rem 5rem}
+.iq-divider{height:1px;background:var(--border)}
 
-.cred-card{background:#080604;border:1px solid #170F0A;padding:1.75rem 2rem;position:relative;overflow:hidden}
-.cred-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(201,169,110,.25),transparent)}
-.cred-card-label{font-size:.58rem;font-weight:500;letter-spacing:.25em;text-transform:uppercase;color:#3A3228;margin-bottom:.75rem}
-.cred-metric-value{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:300;color:#F5EDD8;line-height:1}
-.cred-metric-value.gold{color:#C9A96E}
+/* ── Cards ── */
+.iq-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.5rem 1.75rem;position:relative;overflow:hidden}
+.iq-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--violet))}
+.iq-card-label{font-size:.58rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+.iq-metric{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:400;color:var(--text);line-height:1}
+.iq-metric.green{color:var(--green)}
+.iq-metric.amber{color:var(--amber)}
+.iq-metric.violet{color:var(--violet)}
 
-.consent-box{background:#080604;border:1px solid #170F0A;padding:2.5rem;position:relative;max-width:520px;margin:0 auto}
-.consent-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(201,169,110,.25),transparent)}
-.consent-permission{display:flex;align-items:flex-start;gap:1rem;padding:1rem 0;border-bottom:1px solid #0F0D0A}
-.consent-check{color:#C9A96E;font-size:.75rem;margin-top:.15rem;flex-shrink:0}
-.consent-text{font-size:.8rem;color:#7A7060;line-height:1.6;font-weight:300}
-.consent-text strong{color:#D4C9B8;font-weight:400}
+/* ── Bank tiles ── */
+.bank-tile{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.5rem 1rem;text-align:center;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:.6rem;margin-bottom:.5rem}
+.bank-tile:hover{border-color:var(--border2);background:var(--bg3)}
+.bank-tile.selected{border-color:var(--accent);background:var(--bg3);box-shadow:0 0 0 1px var(--accent) inset}
+.bank-logo{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem;letter-spacing:.05em}
+.bank-name-text{font-size:.68rem;font-weight:400;color:var(--muted);letter-spacing:.05em}
+.bank-selected-badge{font-size:.55rem;letter-spacing:.15em;color:var(--accent);font-weight:600;text-transform:uppercase}
 
+/* ── Consent ── */
+.iq-consent{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:2.5rem;max-width:520px;margin:0 auto;position:relative;overflow:hidden}
+.iq-consent::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--green))}
+.consent-row{display:flex;gap:1rem;padding:.9rem 0;border-bottom:1px solid var(--border)}
+.consent-icon{font-size:.9rem;flex-shrink:0;margin-top:.1rem}
+.consent-txt{font-size:.82rem;color:var(--muted);line-height:1.6;font-weight:300}
+.consent-txt strong{color:var(--text);font-weight:500}
+
+/* ── Loading ── */
 .loading-wrap{text-align:center;padding:4rem 2rem}
-.loading-bank{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;color:#F5EDD8;margin-bottom:.5rem}
-.loading-step{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:#4A4238;margin-top:1.5rem}
-@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
-.pulse-dot{display:inline-block;width:6px;height:6px;background:#C9A96E;border-radius:50%;margin:0 3px;animation:pulse 1.4s ease-in-out infinite}
-.pulse-dot:nth-child(2){animation-delay:.2s}
-.pulse-dot:nth-child(3){animation-delay:.4s}
+.loading-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:400;color:var(--text);margin-bottom:.4rem}
+.loading-sub{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:1.2rem}
+@keyframes pulse{0%,100%{opacity:.2}50%{opacity:1}}
+.pulse-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin:0 3px;animation:pulse 1.4s ease-in-out infinite}
+.pd1{background:var(--accent)}
+.pd2{background:var(--violet);animation-delay:.2s}
+.pd3{background:var(--green);animation-delay:.4s}
+.progress-track{width:220px;height:2px;background:var(--border);border-radius:2px;margin:1.5rem auto 0}
+.progress-fill{height:2px;border-radius:2px;background:linear-gradient(90deg,var(--accent),var(--violet));transition:width .5s}
 
-/* UPI review */
-.upi-row{display:grid;grid-template-columns:2fr 1.2fr 1fr;align-items:center;gap:1.5rem;padding:1.1rem 0;border-bottom:1px solid #0F0D0A}
-.upi-id{font-family:'Inter',sans-serif;font-size:.82rem;font-weight:400;color:#9E9080}
-.upi-id span{display:block;font-size:.68rem;color:#3A3228;margin-top:.2rem;letter-spacing:.05em}
-.upi-amt{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:300;color:#F5EDD8;text-align:right}
-.upi-progress-bar{height:3px;background:#0F0D0A;margin-bottom:2rem}
-.upi-progress-fill{height:3px;background:#C9A96E;transition:width .4s}
-.upi-header-note{background:#080604;border:1px solid #170F0A;border-left:2px solid #C9A96E;padding:1rem 1.5rem;margin-bottom:2rem;font-size:.82rem;color:#7A7060;font-weight:300;line-height:1.6}
-.upi-header-note strong{color:#C9A96E;font-weight:500}
+/* ── UPI review ── */
+.upi-note{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:1rem 1.5rem;margin-bottom:1.5rem;font-size:.83rem;color:var(--muted);line-height:1.6}
+.upi-note strong{color:var(--accent);font-weight:500}
+.prog-bar{height:3px;background:var(--border);border-radius:2px;margin:.5rem 0 .5rem}
+.prog-fill{height:3px;border-radius:2px;background:linear-gradient(90deg,var(--accent),var(--green));transition:width .4s}
 
-.cred-insight{padding:1.25rem 0 1.25rem 1.5rem;border-bottom:1px solid #0F0D0A;font-size:.875rem;font-weight:300;color:#7A7060;line-height:1.75;position:relative}
-.cred-insight::before{content:'—';position:absolute;left:0;color:#C9A96E;font-family:'Cormorant Garamond',serif}
-.cred-insight strong{color:#D4C9B8;font-weight:500}
-.cred-row{display:flex;justify-content:space-between;align-items:center;padding:1.1rem 0;border-bottom:1px solid #0F0D0A}
-.cred-row-cat{font-size:.82rem;font-weight:300;color:#7A7060;min-width:130px}
-.cred-row-card{font-size:.78rem;font-weight:400;color:#C9A96E;flex:1;text-align:center;padding:0 1rem}
-.cred-row-val{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;color:#F5EDD8;text-align:right;min-width:90px}
-.cred-sub-tag{display:inline-flex;align-items:center;gap:.6rem;background:#080604;border:1px solid #170F0A;padding:.45rem 1rem;margin:.25rem;font-size:.72rem;color:#7A7060}
-.cred-sub-tag span{color:#C9A96E;font-family:'Cormorant Garamond',serif;font-size:.9rem}
-.cred-chat-user{text-align:right;padding:.75rem 0;font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-style:italic;color:#6B5344}
-.cred-chat-ai{padding:1rem 0 1rem 1.5rem;border-left:1px solid rgba(201,169,110,.2);font-size:.875rem;color:#7A7060;line-height:1.75;font-weight:300;margin-bottom:.5rem}
-.account-badge{font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:#C9A96E;background:rgba(201,169,110,.07);border:1px solid rgba(201,169,110,.2);padding:.25rem .65rem}
+/* ── Results ── */
+.iq-insight{padding:1.1rem 0 1.1rem 1.4rem;border-bottom:1px solid var(--border);font-size:.875rem;font-weight:300;color:var(--muted);line-height:1.7;position:relative}
+.iq-insight::before{content:'';position:absolute;left:0;top:.4rem;bottom:.4rem;width:2px;background:linear-gradient(180deg,var(--accent),var(--violet));border-radius:2px}
+.iq-insight strong{color:var(--text);font-weight:500}
+.iq-row{display:flex;justify-content:space-between;align-items:center;padding:1rem 0;border-bottom:1px solid var(--border)}
+.iq-row-cat{font-size:.82rem;font-weight:400;color:var(--muted);min-width:130px}
+.iq-row-card{font-size:.8rem;font-weight:500;color:var(--accent);flex:1;text-align:center;padding:0 1rem}
+.iq-row-val{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:400;color:var(--text);text-align:right;min-width:90px}
+.iq-sub-tag{display:inline-flex;align-items:center;gap:.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:.35rem .9rem;margin:.25rem;font-size:.72rem;color:var(--muted)}
+.iq-sub-tag span{color:var(--green);font-weight:500}
+.iq-chat-user{text-align:right;padding:.6rem 0;font-family:'Playfair Display',serif;font-size:1rem;font-style:italic;color:var(--muted)}
+.iq-chat-ai{padding:.9rem 0 .9rem 1.4rem;border-left:2px solid var(--border2);font-size:.875rem;color:var(--muted);line-height:1.75;font-weight:300;margin-bottom:.4rem}
+.account-badge{font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);background:rgba(108,142,245,.1);border:1px solid rgba(108,142,245,.25);border-radius:4px;padding:.25rem .65rem}
 
-div[data-testid="stTextInput"] input{background:transparent!important;border:none!important;border-bottom:1px solid #170F0A!important;border-radius:0!important;color:#E8E0D0!important;font-family:'Inter',sans-serif!important;font-size:.9rem!important;font-weight:300!important;padding:.75rem 0!important;box-shadow:none!important}
-div[data-testid="stTextInput"] input:focus{border-bottom-color:#C9A96E!important;outline:none!important;box-shadow:none!important}
-.stCheckbox{margin:.1rem 0!important}
-.stCheckbox>label>div{color:#6B5344!important;font-size:.78rem!important;letter-spacing:.05em!important;font-family:'Inter',sans-serif!important;font-weight:300!important}
+/* ── Inputs ── */
+div[data-testid="stTextInput"] input{background:var(--bg2)!important;border:1px solid var(--border)!important;border-radius:8px!important;color:var(--text)!important;font-family:'Outfit',sans-serif!important;font-size:.9rem!important;font-weight:300!important;padding:.65rem 1rem!important;box-shadow:none!important}
+div[data-testid="stTextInput"] input:focus{border-color:var(--accent)!important;outline:none!important;box-shadow:0 0 0 3px rgba(108,142,245,.12)!important}
+.stCheckbox{margin:.15rem 0!important}
+.stCheckbox>label>div{color:var(--muted)!important;font-size:.82rem!important;font-family:'Outfit',sans-serif!important;font-weight:400!important}
+div[data-testid="stSelectbox"]>div>div{background:var(--bg2)!important;border:1px solid var(--border)!important;border-radius:8px!important;color:var(--text)!important;font-family:'Outfit',sans-serif!important;font-size:.8rem!important}
+div[data-testid="stSelectbox"] svg{color:var(--accent)!important}
 
-/* Selectbox CRED style */
-div[data-testid="stSelectbox"]>div>div{background:#080604!important;border:none!important;border-bottom:1px solid #170F0A!important;border-radius:0!important;color:#E8E0D0!important;font-family:'Inter',sans-serif!important;font-size:.78rem!important;font-weight:300!important}
-div[data-testid="stSelectbox"] svg{color:#C9A96E!important}
+/* ── Buttons ── */
+div[data-testid="stButton"]>button{background:linear-gradient(135deg,var(--accent),var(--violet))!important;border:none!important;color:#fff!important;border-radius:8px!important;padding:.75rem 2.5rem!important;font-family:'Outfit',sans-serif!important;font-size:.72rem!important;font-weight:600!important;letter-spacing:.15em!important;text-transform:uppercase!important;width:auto!important;transition:all .25s!important;box-shadow:0 4px 15px rgba(108,142,245,.25)!important}
+div[data-testid="stButton"]>button:hover{opacity:.85!important;box-shadow:0 4px 20px rgba(108,142,245,.4)!important}
 
-div[data-testid="stButton"]>button{background:transparent!important;border:1px solid rgba(201,169,110,.4)!important;color:#C9A96E!important;border-radius:0!important;padding:.85rem 3.5rem!important;font-family:'Inter',sans-serif!important;font-size:.6rem!important;font-weight:600!important;letter-spacing:.35em!important;text-transform:uppercase!important;width:auto!important;transition:all .25s!important}
-div[data-testid="stButton"]>button:hover{background:#C9A96E!important;color:#050505!important;border-color:#C9A96E!important}
+/* ── Tabs ── */
+.stTabs [data-baseweb="tab-list"]{background:transparent!important;border-bottom:1px solid var(--border)!important;gap:.5rem!important}
+.stTabs [data-baseweb="tab"]{background:transparent!important;color:var(--muted)!important;font-size:.7rem!important;letter-spacing:.18em!important;text-transform:uppercase!important;font-family:'Outfit',sans-serif!important;font-weight:500!important;padding:.75rem 1.5rem!important;border:none!important;border-radius:0!important}
+.stTabs [aria-selected="true"]{color:var(--accent)!important;border-bottom:2px solid var(--accent)!important}
+.stTabs [data-baseweb="tab-panel"]{background:transparent!important;padding:1.5rem 0!important}
 
-.stTabs [data-baseweb="tab-list"]{background:transparent!important;border-bottom:1px solid #130F0A!important;gap:0!important}
-.stTabs [data-baseweb="tab"]{background:transparent!important;color:#3A3228!important;font-size:.6rem!important;letter-spacing:.25em!important;text-transform:uppercase!important;font-family:'Inter',sans-serif!important;font-weight:500!important;padding:.85rem 2rem!important;border:none!important}
-.stTabs [aria-selected="true"]{color:#C9A96E!important;border-bottom:1px solid #C9A96E!important}
-.stTabs [data-baseweb="tab-panel"]{background:transparent!important;padding:2rem 0!important}
-details{background:#080604!important;border:none!important;border-bottom:1px solid #130F0A!important;border-radius:0!important;padding:0 6rem!important}
-details summary{font-size:.6rem!important;letter-spacing:.25em!important;text-transform:uppercase!important;color:#3A3228!important;font-family:'Inter',sans-serif!important;padding:.75rem 0!important;cursor:pointer!important}
-details>div{background:#080604!important;padding:.5rem 0 1rem!important}
-.stSpinner>div{border-top-color:#C9A96E!important}
-::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:#050505}::-webkit-scrollbar-thumb{background:#170F0A}
+/* ── Expander ── */
+details{background:var(--bg2)!important;border:1px solid var(--border)!important;border-radius:10px!important;padding:0 5rem!important;margin:.5rem 0!important}
+details summary{font-size:.65rem!important;letter-spacing:.2em!important;text-transform:uppercase!important;color:var(--muted)!important;font-family:'Outfit',sans-serif!important;padding:.8rem 0!important;cursor:pointer!important}
+details>div{background:var(--bg2)!important;padding:.25rem 0 .75rem!important}
+
+.stSpinner>div{border-top-color:var(--accent)!important}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
 div[data-testid="stForm"]{background:transparent!important;border:none!important;padding:0!important}
+div[data-testid="stFileUploader"]{background:var(--bg2)!important;border:1px solid var(--border)!important;border-radius:10px!important}
 </style>
 """, unsafe_allow_html=True)
 
@@ -284,17 +325,19 @@ QUESTION: {question}"""
 
 def make_donut(categories):
     filtered = {k:v for k,v in categories.items() if v > 0}
-    palette = ["#C9A96E","#8B6914","#D4B896","#6B5344","#A0785A","#E8D5B0","#4A3728","#BFA882","#3D2B1F"]
+    # Vibrant, distinct palette
+    palette = ["#6C8EF5","#34D399","#F87171","#FBBF24","#A78BFA","#38BDF8","#FB923C","#4ADE80","#F472B6"]
     fig = go.Figure(go.Pie(
-        labels=list(filtered.keys()), values=list(filtered.values()), hole=0.74,
-        marker=dict(colors=palette[:len(filtered)], line=dict(color="#050505",width=4)),
+        labels=list(filtered.keys()), values=list(filtered.values()), hole=0.68,
+        marker=dict(colors=palette[:len(filtered)], line=dict(color="#080C14",width=3)),
         textinfo="none",
         hovertemplate="<b>%{label}</b><br>₹%{value:,.0f} · %{percent}<extra></extra>",
     ))
     fig.update_layout(
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", showlegend=True,
-        legend=dict(font=dict(color="#4A4238",family="Inter",size=10),bgcolor="rgba(0,0,0,0)"),
-        margin=dict(t=10,b=10,l=10,r=10), height=280,
+        legend=dict(font=dict(color="#4A5A7A",family="Outfit",size=11),bgcolor="rgba(0,0,0,0)",
+                    itemclick=False, orientation="v"),
+        margin=dict(t=10,b=10,l=10,r=10), height=300,
     )
     return fig
 
@@ -321,13 +364,13 @@ for k, v in defaults.items():
 # HERO
 # ══════════════════════════════════════════════════════════════
 st.markdown("""
-<div class="cred-hero-section">
+<div class="iq-hero-wrap">
     <div>
-        <div class="cred-eyebrow" style="margin-bottom:1.2rem">AI &nbsp;·&nbsp; Finance &nbsp;·&nbsp; India</div>
-        <div class="cred-hero">Card<em>IQ</em></div>
+        <div class="iq-eyebrow" style="margin-bottom:1rem">AI · Finance · India</div>
+        <div class="iq-hero">Card<em>IQ</em></div>
     </div>
-    <div style="padding-bottom:0.5rem">
-        <div class="cred-sub">Know where your money goes.<br>Know what you're leaving behind.</div>
+    <div style="padding-bottom:.4rem">
+        <div class="iq-sub">Know where your money goes.<br>Know what you're leaving behind.</div>
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -335,18 +378,18 @@ st.markdown("""
 with st.expander("✦  CONNECT  —  Enter OpenAI API Key"):
     api_input = st.text_input("", type="password", placeholder="sk-...", value=st.session_state.api_key, label_visibility="collapsed")
     if api_input: st.session_state.api_key = api_input
-st.markdown('<div class="cred-divider"></div>', unsafe_allow_html=True)
+st.markdown('<div class="iq-divider"></div>', unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════
 # STEP: HOME
 # ══════════════════════════════════════════════════════════════
 if st.session_state.flow_step == "home":
-    st.markdown('<div class="cred-body-section">', unsafe_allow_html=True)
-    st.markdown('<div class="cred-section-label">Get Started</div>', unsafe_allow_html=True)
+    st.markdown('<div class="iq-body">', unsafe_allow_html=True)
+    st.markdown('<div class="iq-label">Get Started</div>', unsafe_allow_html=True)
     st.markdown("""
     <div style="margin-bottom:2rem">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;color:#F5EDD8;margin-bottom:.5rem">Connect your bank account.</div>
-        <div class="cred-sub">We use India's Account Aggregator framework to securely fetch your transactions.<br>Read-only access. No credentials stored. Disconnect anytime.</div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:300;color:#E2E8F4;margin-bottom:.5rem">Connect your bank account.</div>
+        <div class="iq-sub">We use India's Account Aggregator framework to securely fetch your transactions.<br>Read-only access. No credentials stored. Disconnect anytime.</div>
     </div>
     """, unsafe_allow_html=True)
     _, c_btn, _ = st.columns([1,1.5,1])
@@ -356,10 +399,10 @@ if st.session_state.flow_step == "home":
             st.rerun()
     st.markdown("""
     <div style="margin-top:2rem;display:flex;gap:3rem">
-        <div style="display:flex;align-items:center;gap:.75rem"><span style="color:#C9A96E;font-size:.75rem">✦</span><span class="cred-sub" style="font-size:.72rem">256-bit encryption</span></div>
-        <div style="display:flex;align-items:center;gap:.75rem"><span style="color:#C9A96E;font-size:.75rem">✦</span><span class="cred-sub" style="font-size:.72rem">Read-only access</span></div>
-        <div style="display:flex;align-items:center;gap:.75rem"><span style="color:#C9A96E;font-size:.75rem">✦</span><span class="cred-sub" style="font-size:.72rem">RBI Account Aggregator framework</span></div>
-        <div style="display:flex;align-items:center;gap:.75rem"><span style="color:#C9A96E;font-size:.75rem">✦</span><span class="cred-sub" style="font-size:.72rem">Data never stored</span></div>
+        <div style="display:flex;align-items:center;gap:.75rem"><span style="color:#6C8EF5;font-size:.75rem">✦</span><span class="iq-sub" style="font-size:.72rem">256-bit encryption</span></div>
+        <div style="display:flex;align-items:center;gap:.75rem"><span style="color:#6C8EF5;font-size:.75rem">✦</span><span class="iq-sub" style="font-size:.72rem">Read-only access</span></div>
+        <div style="display:flex;align-items:center;gap:.75rem"><span style="color:#6C8EF5;font-size:.75rem">✦</span><span class="iq-sub" style="font-size:.72rem">RBI Account Aggregator framework</span></div>
+        <div style="display:flex;align-items:center;gap:.75rem"><span style="color:#6C8EF5;font-size:.75rem">✦</span><span class="iq-sub" style="font-size:.72rem">Data never stored</span></div>
     </div>""", unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -367,21 +410,25 @@ if st.session_state.flow_step == "home":
 # STEP: BANK SELECT
 # ══════════════════════════════════════════════════════════════
 elif st.session_state.flow_step == "bank_select":
-    st.markdown('<div class="cred-body-section">', unsafe_allow_html=True)
-    st.markdown('<div class="cred-section-label">Step 1 of 3 &nbsp;·&nbsp; Select Bank</div>', unsafe_allow_html=True)
-    st.markdown("""<div style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;color:#F5EDD8;margin-bottom:.5rem">Which bank are you with?</div>
-    <div class="cred-sub" style="margin-bottom:2rem">Select your primary bank to fetch account and card statements.</div>""", unsafe_allow_html=True)
+    st.markdown('<div class="iq-body">', unsafe_allow_html=True)
+    st.markdown('<div class="iq-label">Step 1 of 3 &nbsp;·&nbsp; Select Bank</div>', unsafe_allow_html=True)
+    st.markdown("""<div style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:300;color:#E2E8F4;margin-bottom:.5rem">Which bank are you with?</div>
+    <div class="iq-sub" style="margin-bottom:2rem">Select your primary bank to fetch account and card statements.</div>""", unsafe_allow_html=True)
 
     cols = st.columns(4)
     for i, bank in enumerate(BANKS):
         with cols[i % 4]:
             is_sel = st.session_state.selected_bank == bank["name"]
-            border = "rgba(201,169,110,0.5)" if is_sel else "#170F0A"
-            bg = "#0F0D0A" if is_sel else "#080604"
-            sel_badge = "<div style='margin-top:.5rem;font-size:.55rem;letter-spacing:.15em;color:#C9A96E'>✦ SELECTED</div>" if is_sel else ""
-            st.markdown(f"""<div style="background:{bg};border:1px solid {border};padding:1.75rem 1rem;text-align:center;margin-bottom:1px">
-                <div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:#F5EDD8;margin-bottom:.4rem">{bank['abbr']}</div>
-                <div style="font-size:.65rem;letter-spacing:.1em;color:#4A4238">{bank['name']}</div>{sel_badge}</div>""", unsafe_allow_html=True)
+            sel_badge = f'<div class="bank-selected-badge">✓ Selected</div>' if is_sel else ""
+            sel_class = "selected" if is_sel else ""
+            st.markdown(f"""
+            <div class="bank-tile {sel_class}">
+                <div class="bank-logo" style="background:{bank['bg']};color:{bank['color']};border:1px solid {bank['color']}33">
+                    {bank['abbr']}
+                </div>
+                <div class="bank-name-text">{bank['name']}</div>
+                {sel_badge}
+            </div>""", unsafe_allow_html=True)
             if st.button(bank["name"], key=f"bank_{bank['name']}", use_container_width=True):
                 st.session_state.selected_bank = bank["name"]
                 st.rerun()
@@ -401,10 +448,10 @@ elif st.session_state.flow_step == "bank_select":
 # STEP: CARD SELECT
 # ══════════════════════════════════════════════════════════════
 elif st.session_state.flow_step == "card_select":
-    st.markdown('<div class="cred-body-section">', unsafe_allow_html=True)
-    st.markdown('<div class="cred-section-label">Step 2 of 3 &nbsp;·&nbsp; Your Credit Cards</div>', unsafe_allow_html=True)
-    st.markdown(f"""<div style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;color:#F5EDD8;margin-bottom:.5rem">Which cards do you use?</div>
-    <div class="cred-sub" style="margin-bottom:2rem">Connected to <span style="color:#C9A96E">{st.session_state.selected_bank}</span>. Select your credit cards for reward optimization.</div>""", unsafe_allow_html=True)
+    st.markdown('<div class="iq-body">', unsafe_allow_html=True)
+    st.markdown('<div class="iq-label">Step 2 of 3 &nbsp;·&nbsp; Your Credit Cards</div>', unsafe_allow_html=True)
+    st.markdown(f"""<div style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:300;color:#E2E8F4;margin-bottom:.5rem">Which cards do you use?</div>
+    <div class="iq-sub" style="margin-bottom:2rem">Connected to <span style="color:#6C8EF5">{st.session_state.selected_bank}</span>. Select your credit cards for reward optimization.</div>""", unsafe_allow_html=True)
 
     owned = []
     c1, c2 = st.columns(2)
@@ -412,7 +459,7 @@ elif st.session_state.flow_step == "card_select":
         with (c1 if i % 2 == 0 else c2):
             if st.checkbox(card, key=f"card_{card}", value=(card in st.session_state.owned_cards)):
                 owned.append(card)
-                st.markdown(f'<div class="cred-sub" style="font-size:.68rem;margin:-.4rem 0 .6rem 1.8rem;color:#4A3728">{CARD_BENEFITS[card]["note"]}</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="iq-sub" style="font-size:.68rem;margin:-.4rem 0 .6rem 1.8rem;color:#4A3728">{CARD_BENEFITS[card]["note"]}</div>', unsafe_allow_html=True)
     st.session_state.owned_cards = owned
 
     st.markdown('<div style="height:2rem"></div>', unsafe_allow_html=True)
@@ -427,19 +474,19 @@ elif st.session_state.flow_step == "card_select":
 # STEP: CONSENT
 # ══════════════════════════════════════════════════════════════
 elif st.session_state.flow_step == "consent":
-    st.markdown('<div class="cred-body-section">', unsafe_allow_html=True)
-    st.markdown('<div class="cred-section-label">Step 3 of 3 &nbsp;·&nbsp; Review & Consent</div>', unsafe_allow_html=True)
+    st.markdown('<div class="iq-body">', unsafe_allow_html=True)
+    st.markdown('<div class="iq-label">Step 3 of 3 &nbsp;·&nbsp; Review & Consent</div>', unsafe_allow_html=True)
     _, c_mid, _ = st.columns([.5,3,.5])
     with c_mid:
-        st.markdown(f"""<div class="consent-box">
-            <div class="cred-eyebrow" style="color:#C9A96E;margin-bottom:1.5rem">{st.session_state.selected_bank} &nbsp;·&nbsp; Account Aggregator Consent</div>
-            <div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:#F5EDD8;margin-bottom:1.5rem;line-height:1.3">CardIQ is requesting<br>read-only access to your data.</div>
-            <div class="consent-permission"><span class="consent-check">✦</span><div class="consent-text"><strong>Transaction history</strong> — Last 90 days of debits and credits from your linked account.</div></div>
-            <div class="consent-permission"><span class="consent-check">✦</span><div class="consent-text"><strong>Credit card statements</strong> — Monthly statement data for selected cards only.</div></div>
-            <div class="consent-permission"><span class="consent-check">✦</span><div class="consent-text"><strong>No credentials shared</strong> — CardIQ never sees your PIN, password, or OTP.</div></div>
-            <div class="consent-permission" style="border:none"><span class="consent-check">✦</span><div class="consent-text"><strong>One-time consent</strong> — Access expires after this session. Revoke anytime from your bank app.</div></div>
-            <div style="margin-top:1.5rem;padding:1rem;background:#050505;border:1px solid #0F0D0A">
-                <div class="cred-sub" style="font-size:.68rem;color:#3A3228">This consent is governed by the RBI Account Aggregator framework under NBFC-AA regulations. CardIQ is a registered Financial Information User (FIU).</div>
+        st.markdown(f"""<div class="iq-consent">
+            <div class="iq-eyebrow" style="color:#6C8EF5;margin-bottom:1.5rem">{st.session_state.selected_bank} &nbsp;·&nbsp; Account Aggregator Consent</div>
+            <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:300;color:#E2E8F4;margin-bottom:1.5rem;line-height:1.3">CardIQ is requesting<br>read-only access to your data.</div>
+            <div class="consent-row"><span class="consent-icon">✦</span><div class="consent-txt"><strong>Transaction history</strong> — Last 90 days of debits and credits from your linked account.</div></div>
+            <div class="consent-row"><span class="consent-icon">✦</span><div class="consent-txt"><strong>Credit card statements</strong> — Monthly statement data for selected cards only.</div></div>
+            <div class="consent-row"><span class="consent-icon">✦</span><div class="consent-txt"><strong>No credentials shared</strong> — CardIQ never sees your PIN, password, or OTP.</div></div>
+            <div class="consent-row" style="border:none"><span class="consent-icon">✦</span><div class="consent-txt"><strong>One-time consent</strong> — Access expires after this session. Revoke anytime from your bank app.</div></div>
+            <div style="margin-top:1.5rem;padding:1rem;background:#080C14;border:1px solid #1E2A3F">
+                <div class="iq-sub" style="font-size:.68rem;color:#2A3855">This consent is governed by the RBI Account Aggregator framework under NBFC-AA regulations. CardIQ is a registered Financial Information User (FIU).</div>
             </div></div>""", unsafe_allow_html=True)
         st.markdown('<div style="height:1.5rem"></div>', unsafe_allow_html=True)
         cb1, cb2 = st.columns(2)
@@ -453,7 +500,7 @@ elif st.session_state.flow_step == "consent":
 # STEP: CONNECTING
 # ══════════════════════════════════════════════════════════════
 elif st.session_state.flow_step == "connecting":
-    st.markdown('<div class="cred-body-section">', unsafe_allow_html=True)
+    st.markdown('<div class="iq-body">', unsafe_allow_html=True)
     placeholder = st.empty()
     loading_steps = [
         f"Connecting to {st.session_state.selected_bank}",
@@ -463,15 +510,15 @@ elif st.session_state.flow_step == "connecting":
         "Preparing your data",
     ]
     for i, step in enumerate(loading_steps):
-        dots = '<span class="pulse-dot"></span><span class="pulse-dot"></span><span class="pulse-dot"></span>'
+        dots = '<span class="pulse-dot pd1"></span><span class="pulse-dot pd2"></span><span class="pulse-dot pd3"></span>'
         pct = int((i+1)/len(loading_steps)*100)
         placeholder.markdown(f"""<div class="loading-wrap">
-            <div class="cred-eyebrow" style="margin-bottom:1rem">{st.session_state.selected_bank}</div>
-            <div class="loading-bank">{step}</div>
+            <div class="iq-eyebrow" style="margin-bottom:1rem">{st.session_state.selected_bank}</div>
+            <div class="loading-title">{step}</div>
             <div style="margin-top:1.5rem">{dots}</div>
-            <div class="loading-step">{i+1} of {len(loading_steps)}</div>
+            <div class="loading-sub">{i+1} of {len(loading_steps)}</div>
             <div style="margin-top:2rem;width:200px;margin-left:auto;margin-right:auto">
-                <div class="upi-progress-bar"><div class="upi-progress-fill" style="width:{pct}%"></div></div>
+                <div class="progress-track"><div class="progress-fill" style="width:{pct}%"></div></div>
             </div></div>""", unsafe_allow_html=True)
         time.sleep(0.7)
 
@@ -504,18 +551,18 @@ elif st.session_state.flow_step == "upi_review":
     done = sum(1 for v in st.session_state.upi_categories.values() if v != "— Skip —")
     pct = int(done/n*100) if n else 100
 
-    st.markdown('<div class="cred-body-section">', unsafe_allow_html=True)
-    st.markdown('<div class="cred-section-label">Quick Review &nbsp;·&nbsp; UPI Transactions</div>', unsafe_allow_html=True)
+    st.markdown('<div class="iq-body">', unsafe_allow_html=True)
+    st.markdown('<div class="iq-label">Quick Review &nbsp;·&nbsp; UPI Transactions</div>', unsafe_allow_html=True)
 
     st.markdown(f"""
-    <div style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;color:#F5EDD8;margin-bottom:.5rem">
+    <div style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:300;color:#E2E8F4;margin-bottom:.5rem">
         We found <em>{n}</em> UPI payments we couldn't identify.
     </div>
-    <div class="upi-progress-bar" style="margin:1rem 0 0">
-        <div class="upi-progress-fill" style="width:{pct}%"></div>
+    <div class="progress-track" style="margin:1rem 0 0">
+        <div class="progress-fill" style="width:{pct}%"></div>
     </div>
-    <div class="cred-sub" style="font-size:.68rem;margin-bottom:1.5rem">{done} of {n} categorized</div>
-    <div class="upi-header-note">
+    <div class="iq-sub" style="font-size:.68rem;margin-bottom:1.5rem">{done} of {n} categorized</div>
+    <div class="upi-note">
         UPI transactions show only a payment ID — we can't tell if <strong>9876543210@ybl</strong> is your local grocery store, 
         a restaurant, or a friend. Tag them once and your analysis will be precise. 
         Not sure? Select <strong>Other</strong> or skip.
@@ -524,9 +571,9 @@ elif st.session_state.flow_step == "upi_review":
 
     # Column headers
     st.markdown("""<div class="upi-row" style="border-bottom:1px solid #1A1410">
-        <span style="font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:#3A3228">UPI ID &nbsp;·&nbsp; Date</span>
-        <span style="font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:#3A3228;text-align:right">Amount</span>
-        <span style="font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:#3A3228">Category</span>
+        <span style="font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:#2A3855">UPI ID &nbsp;·&nbsp; Date</span>
+        <span style="font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:#2A3855;text-align:right">Amount</span>
+        <span style="font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:#2A3855">Category</span>
     </div>""", unsafe_allow_html=True)
 
     # One row per UPI transaction
@@ -561,7 +608,7 @@ elif st.session_state.flow_step == "upi_review":
     tagged = sum(1 for v in st.session_state.upi_categories.values() if v != "— Skip —")
     skipped = n - tagged
 
-    st.markdown(f'<div class="cred-sub" style="font-size:.72rem;margin-bottom:1.5rem">✦ &nbsp; {tagged} tagged &nbsp;·&nbsp; {skipped} will be auto-categorized as <span style="color:#C9A96E">Other</span></div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="iq-sub" style="font-size:.72rem;margin-bottom:1.5rem">✦ &nbsp; {tagged} tagged &nbsp;·&nbsp; {skipped} will be auto-categorized as <span style="color:#6C8EF5">Other</span></div>', unsafe_allow_html=True)
 
     cb1, cb2, _ = st.columns([1,1.5,3])
     with cb1:
@@ -578,12 +625,12 @@ elif st.session_state.flow_step == "upi_review":
 # STEP: ANALYSING  (apply UPI tags + call AI)
 # ══════════════════════════════════════════════════════════════
 elif st.session_state.flow_step == "analysing":
-    st.markdown('<div class="cred-body-section">', unsafe_allow_html=True)
+    st.markdown('<div class="iq-body">', unsafe_allow_html=True)
     placeholder = st.empty()
     placeholder.markdown("""<div class="loading-wrap">
-        <div class="cred-eyebrow" style="margin-bottom:1rem">GPT-4o</div>
-        <div class="loading-bank">Analysing your finances</div>
-        <div style="margin-top:1.5rem"><span class="pulse-dot"></span><span class="pulse-dot"></span><span class="pulse-dot"></span></div>
+        <div class="iq-eyebrow" style="margin-bottom:1rem">GPT-4o</div>
+        <div class="loading-title">Analysing your finances</div>
+        <div style="margin-top:1.5rem"><span class="pulse-dot pd1"></span><span class="pulse-dot pd2"></span><span class="pulse-dot pd3"></span></div>
     </div>""", unsafe_allow_html=True)
 
     if not st.session_state.api_key:
@@ -625,95 +672,95 @@ elif st.session_state.flow_step == "results":
 
     tagged_count = sum(1 for v in st.session_state.upi_categories.values() if v != "— Skip —")
 
-    st.markdown(f"""<div style="padding:1rem 6rem;background:#080604;border-bottom:1px solid #0F0D0A;display:flex;justify-content:space-between;align-items:center">
-        <div class="cred-eyebrow">Connected &nbsp;·&nbsp; {st.session_state.selected_bank}</div>
+    st.markdown(f"""<div style="padding:1rem 6rem;background:#0D1220;border-bottom:1px solid #1E2A3F;display:flex;justify-content:space-between;align-items:center">
+        <div class="iq-eyebrow">Connected &nbsp;·&nbsp; {st.session_state.selected_bank}</div>
         <div style="display:flex;gap:1.5rem;align-items:center">
             {"".join([f'<span class="account-badge">{c}</span>' for c in (st.session_state.owned_cards or ["No cards"])])}
         </div>
-        <div class="cred-eyebrow" style="color:#3A3228">{tagged_count} UPI payments tagged &nbsp;·&nbsp; March 2024</div>
+        <div class="iq-eyebrow" style="color:#2A3855">{tagged_count} UPI payments tagged &nbsp;·&nbsp; March 2024</div>
     </div>""", unsafe_allow_html=True)
 
-    st.markdown('<div class="cred-body-section">', unsafe_allow_html=True)
-    st.markdown('<div class="cred-section-label">Overview</div>', unsafe_allow_html=True)
+    st.markdown('<div class="iq-body">', unsafe_allow_html=True)
+    st.markdown('<div class="iq-label">Overview</div>', unsafe_allow_html=True)
 
     subs = r.get("subscriptions",[])
     sub_total = sum(s.get("amount",0) for s in subs)
     savings   = r.get("total_potential_savings",0)
 
     m1,m2,m3,m4 = st.columns(4)
-    with m1: st.markdown(f'<div class="cred-card"><div class="cred-card-label">Total Spend</div><div class="cred-metric-value">₹{r.get("total_spend",0):,.0f}</div></div>', unsafe_allow_html=True)
-    with m2: st.markdown(f'<div class="cred-card"><div class="cred-card-label">Top Category</div><div class="cred-metric-value" style="font-size:1.5rem">{r.get("top_category","—")}</div></div>', unsafe_allow_html=True)
-    with m3: st.markdown(f'<div class="cred-card"><div class="cred-card-label">Subscriptions / mo</div><div class="cred-metric-value">₹{sub_total:,.0f}</div></div>', unsafe_allow_html=True)
-    with m4: st.markdown(f'<div class="cred-card"><div class="cred-card-label">Rewards Unclaimed</div><div class="cred-metric-value gold">₹{savings:,.0f}</div></div>', unsafe_allow_html=True)
+    with m1: st.markdown(f'<div class="iq-card"><div class="iq-card-label">Total Spend</div><div class="iq-metric">₹{r.get("total_spend",0):,.0f}</div></div>', unsafe_allow_html=True)
+    with m2: st.markdown(f'<div class="iq-card"><div class="iq-card-label">Top Category</div><div class="iq-metric" style="font-size:1.5rem">{r.get("top_category","—")}</div></div>', unsafe_allow_html=True)
+    with m3: st.markdown(f'<div class="iq-card"><div class="iq-card-label">Subscriptions / mo</div><div class="iq-metric">₹{sub_total:,.0f}</div></div>', unsafe_allow_html=True)
+    with m4: st.markdown(f'<div class="iq-card"><div class="iq-card-label">Rewards Unclaimed</div><div class="iq-metric green">₹{savings:,.0f}</div></div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
-    st.markdown('<div class="cred-divider"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="iq-divider"></div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="cred-body-section">', unsafe_allow_html=True)
+    st.markdown('<div class="iq-body">', unsafe_allow_html=True)
     tab1, tab2, tab3 = st.tabs(["Spend Breakdown","Insights","Card Optimizer"])
 
     with tab1:
         cats = {k:v for k,v in r.get("categories",{}).items() if v > 0}
         c1,_,c2 = st.columns([1.3,.2,1.8])
         with c1:
-            st.markdown('<div class="cred-section-label">By Category</div>', unsafe_allow_html=True)
+            st.markdown('<div class="iq-label">By Category</div>', unsafe_allow_html=True)
             if cats: st.plotly_chart(make_donut(cats), use_container_width=True, config={"displayModeBar":False})
         with c2:
-            st.markdown('<div class="cred-section-label">Breakdown</div>', unsafe_allow_html=True)
+            st.markdown('<div class="iq-label">Breakdown</div>', unsafe_allow_html=True)
             total = max(r.get("total_spend",1),1)
             for cat,amt in sorted(cats.items(), key=lambda x:-x[1]):
                 pct = int(amt/total*100)
-                st.markdown(f"""<div class="cred-row">
-                    <span class="cred-row-cat">{cat}</span>
-                    <span style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:#3A3228">{pct}%</span>
-                    <span class="cred-row-val">₹{amt:,.0f}</span></div>""", unsafe_allow_html=True)
+                st.markdown(f"""<div class="iq-row">
+                    <span class="iq-row-cat">{cat}</span>
+                    <span style="font-family:'Playfair Display',serif;font-size:1.1rem;color:#2A3855">{pct}%</span>
+                    <span class="iq-row-val">₹{amt:,.0f}</span></div>""", unsafe_allow_html=True)
         if subs:
             st.markdown('<div style="height:2rem"></div>', unsafe_allow_html=True)
-            st.markdown('<div class="cred-section-label">Recurring Charges</div>', unsafe_allow_html=True)
-            st.markdown("".join([f'<div class="cred-sub-tag">{s.get("name","?")} <span>₹{s.get("amount",0):,.0f}/mo</span></div>' for s in subs]), unsafe_allow_html=True)
+            st.markdown('<div class="iq-label">Recurring Charges</div>', unsafe_allow_html=True)
+            st.markdown("".join([f'<div class="iq-sub-tag">{s.get("name","?")} <span>₹{s.get("amount",0):,.0f}/mo</span></div>' for s in subs]), unsafe_allow_html=True)
 
     with tab2:
-        st.markdown('<div class="cred-section-label">Observations</div>', unsafe_allow_html=True)
+        st.markdown('<div class="iq-label">Observations</div>', unsafe_allow_html=True)
         for insight in r.get("insights",[]):
-            st.markdown(f'<div class="cred-insight">{insight}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="iq-insight">{insight}</div>', unsafe_allow_html=True)
         rec = r.get("top_recommendation","")
         if rec:
-            st.markdown(f"""<div style="margin-top:2.5rem;padding:2rem 2.5rem;border:1px solid rgba(201,169,110,.15);background:#080604">
-                <div class="cred-eyebrow" style="color:#C9A96E;margin-bottom:1rem">Primary Recommendation</div>
-                <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;color:#D4C9B8;line-height:1.6">{rec}</div></div>""", unsafe_allow_html=True)
+            st.markdown(f"""<div style="margin-top:2.5rem;padding:2rem 2.5rem;border:1px solid rgba(201,169,110,.15);background:#0D1220">
+                <div class="iq-eyebrow" style="color:#6C8EF5;margin-bottom:1rem">Primary Recommendation</div>
+                <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:300;color:#C8D4F0;line-height:1.6">{rec}</div></div>""", unsafe_allow_html=True)
 
     with tab3:
         opt = r.get("card_optimizer",[])
         total_s = r.get("total_potential_savings",0)
         st.markdown(f"""<div style="padding:2rem 0 2.5rem">
-            <div class="cred-eyebrow" style="color:#3A3228;margin-bottom:.6rem">This month, you left unclaimed</div>
-            <div style="font-family:'Cormorant Garamond',serif;font-size:4.5rem;font-weight:300;color:#C9A96E;line-height:1">₹{total_s:,.0f}</div>
-            <div class="cred-sub" style="margin-top:.6rem">Annualised — ₹{int(total_s*12):,.0f} in rewards you never received.</div></div>""", unsafe_allow_html=True)
+            <div class="iq-eyebrow" style="color:#2A3855;margin-bottom:.6rem">This month, you left unclaimed</div>
+            <div style="font-family:'Playfair Display',serif;font-size:4.5rem;font-weight:300;color:#6C8EF5;line-height:1">₹{total_s:,.0f}</div>
+            <div class="iq-sub" style="margin-top:.6rem">Annualised — ₹{int(total_s*12):,.0f} in rewards you never received.</div></div>""", unsafe_allow_html=True)
         if opt:
-            st.markdown('<div class="cred-section-label">By Category</div>', unsafe_allow_html=True)
-            st.markdown("""<div class="cred-row">
-                <span class="cred-row-cat" style="color:#3A3228;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase">Category</span>
-                <span class="cred-row-card" style="color:#3A3228;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase">Optimal Card</span>
-                <span class="cred-row-val" style="color:#3A3228;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase">You Save</span></div>""", unsafe_allow_html=True)
+            st.markdown('<div class="iq-label">By Category</div>', unsafe_allow_html=True)
+            st.markdown("""<div class="iq-row">
+                <span class="iq-row-cat" style="color:#2A3855;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase">Category</span>
+                <span class="iq-row-card" style="color:#2A3855;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase">Optimal Card</span>
+                <span class="iq-row-val" style="color:#2A3855;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase">You Save</span></div>""", unsafe_allow_html=True)
             for item in sorted(opt, key=lambda x:-x.get("potential_savings",0)):
                 if item.get("potential_savings",0) > 0:
-                    st.markdown(f"""<div class="cred-row">
-                        <span class="cred-row-cat">{item['category']}<br><span style="font-size:.68rem;color:#3A3228">₹{item['spend']:,.0f} spent</span></span>
-                        <span class="cred-row-card">{item['best_card']}<br><span style="font-size:.68rem;color:#6B5344">{item['best_rate']}% cashback</span></span>
-                        <span class="cred-row-val">₹{item['potential_savings']:,.0f}</span></div>""", unsafe_allow_html=True)
+                    st.markdown(f"""<div class="iq-row">
+                        <span class="iq-row-cat">{item['category']}<br><span style="font-size:.68rem;color:#2A3855">₹{item['spend']:,.0f} spent</span></span>
+                        <span class="iq-row-card">{item['best_card']}<br><span style="font-size:.68rem;color:#4A5A7A">{item['best_rate']}% cashback</span></span>
+                        <span class="iq-row-val">₹{item['potential_savings']:,.0f}</span></div>""", unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
-    st.markdown('<div class="cred-divider"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="iq-divider"></div>', unsafe_allow_html=True)
 
     # Chat
-    st.markdown('<div class="cred-body-section">', unsafe_allow_html=True)
-    st.markdown('<div class="cred-section-label">Ask CardIQ</div>', unsafe_allow_html=True)
-    st.markdown('<div class="cred-sub" style="margin-bottom:2rem">Your data. Your questions. Ask anything.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="iq-body">', unsafe_allow_html=True)
+    st.markdown('<div class="iq-label">Ask CardIQ</div>', unsafe_allow_html=True)
+    st.markdown('<div class="iq-sub" style="margin-bottom:2rem">Your data. Your questions. Ask anything.</div>', unsafe_allow_html=True)
 
     for msg in st.session_state.chat_history:
         if msg["role"] == "user":
-            st.markdown(f'<div class="cred-chat-user">&ldquo;{msg["content"]}&rdquo;</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="iq-chat-user">&ldquo;{msg["content"]}&rdquo;</div>', unsafe_allow_html=True)
         else:
-            st.markdown(f'<div class="cred-chat-ai">{msg["content"]}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="iq-chat-ai">{msg["content"]}</div>', unsafe_allow_html=True)
 
     with st.form(key="chat_form", clear_on_submit=True):
         user_q = st.text_input("", placeholder="e.g.  Which card should I cancel?   ·   Where did I overspend?", label_visibility="collapsed")
@@ -740,10 +787,10 @@ elif st.session_state.flow_step == "results":
 
 # Footer
 st.markdown("""
-<div class="cred-divider"></div>
+<div class="iq-divider"></div>
 <div style="padding:2rem 6rem;display:flex;justify-content:space-between">
-    <div class="cred-eyebrow">CardIQ &nbsp;·&nbsp; 2024</div>
-    <div class="cred-sub" style="font-size:.6rem">Your data never leaves your session</div>
-    <div class="cred-eyebrow">GPT-4o &nbsp;·&nbsp; Streamlit</div>
+    <div class="iq-eyebrow">CardIQ &nbsp;·&nbsp; 2024</div>
+    <div class="iq-sub" style="font-size:.6rem">Your data never leaves your session</div>
+    <div class="iq-eyebrow">GPT-4o &nbsp;·&nbsp; Streamlit</div>
 </div>
 """, unsafe_allow_html=True)
