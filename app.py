@@ -424,9 +424,7 @@ def ask_copilot(question: str, analytics: dict):
     client = OpenAI(api_key=key)
     prefs = st.session_state.get("user_prefs", {})
     history = st.session_state.get("chat_history", [])[-6:]
-    history_text = "
-".join([f"User: {h['q']}
-Assistant: {h['a']}" for h in history])
+    history_text = "\n".join([f"User: {h['q']}\nAssistant: {h['a']}" for h in history])
     scope = infer_chat_scope(question)
     scope_rules = {
         "diagnosis": "Answer only why the spend is high / what changed. Give 1 short conclusion and at most 3 bullets naming the main drivers. Do not include cards, bundles, or unrelated categories unless directly necessary.",
