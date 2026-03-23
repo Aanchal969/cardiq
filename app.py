@@ -574,11 +574,7 @@ elif st.session_state.flow_step == "bank_select":
             st.markdown(f"""
             <div class="bank-tile {sel_class}">
                 <div class="bank-logo-wrap" style="background:{bank['bg']};border:1px solid {bank['color']}44;border-radius:12px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;overflow:hidden">
-                    <img src="{bank['logo']}" 
-                         style="width:36px;height:36px;object-fit:contain;border-radius:6px"
-                         onerror="this.style.display='none';this.nextSibling.style.display='flex'"
-                         alt="{bank['name']}">
-                    <div style="display:none;width:36px;height:36px;align-items:center;justify-content:center;font-weight:700;font-size:.62rem;color:{bank['color']};letter-spacing:.05em">{bank['abbr']}</div>
+                    <div style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.62rem;color:{bank['color']};letter-spacing:.05em">{bank['abbr']}</div>
                 </div>
                 <div class="bank-name-text">{bank['name']}</div>
                 {sel_badge}
