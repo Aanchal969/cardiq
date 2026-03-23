@@ -321,13 +321,22 @@ Rules: categorize every transaction, optimizer only for spend > 500, insights mu
     return json.loads(raw)
 
 def chat_with_data(client, question, context):
-    prompt = f"""You are CardIQ — precise, direct, never generic. 2-3 sentences, actual numbers only. No filler.
-DATA: {context}
-QUESTION: {question}"""
+    prompt = f"""You are CardIQ — precise, direct, and specific.
+Answer in 2-4 short sentences using only the data provided.
+If subscriptions are present, name them explicitly with amounts.
+If the data does not contain the answer, say that clearly and do not guess.
+When helpful, prioritise the biggest categories, largest amounts, and the clearest action the user can take.
+
+DATA:
+{context}
+
+QUESTION:
+{question}
+"""
     response = client.chat.completions.create(
         model="gpt-4o",
         messages=[{"role":"user","content":prompt}],
-        temperature=0.4, max_tokens=250,
+        temperature=0.2, max_tokens=300,
     )
     return response.choices[0].message.content.strip()
 
@@ -676,7 +685,15 @@ elif st.session_state.flow_step == "analysing":
 
             st.session_state.analysis     = result
             st.session_state.chat_history = []
-            st.session_state.context      = f"Spend: ₹{result.get('total_spend',0):,.0f}. Categories: {result.get('categories',{})}. Insights: {result.get('insights',[])}. Optimizer: {result.get('card_optimizer',[])}. Savings: ₹{result.get('total_potential_savings',0):,.0f}."
+            subs = result.get("subscriptions", [])
+            st.session_state.context      = (
+                f"Spend: ₹{result.get('total_spend',0):,.0f}. "
+                f"Categories: {result.get('categories',{})}. "
+                f"Subscriptions: {subs}. "
+                f"Insights: {result.get('insights',[])}. "
+                f"Optimizer: {result.get('card_optimizer',[])}. "
+                f"Savings: ₹{result.get('total_potential_savings',0):,.0f}."
+            )
             st.session_state.flow_step    = "results"
             st.rerun()
         except Exception as e:
