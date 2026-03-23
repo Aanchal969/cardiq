@@ -399,6 +399,23 @@ def make_donut(cat_df: pd.DataFrame):
     return fig
 
 
+def infer_chat_scope(question: str) -> str:
+    q = question.lower().strip()
+    if any(k in q for k in ["break down", "breakdown", "split", "segregat", "drill down", "expand"]):
+        return "breakdown"
+    if any(k in q for k in ["why", "what went wrong", "how is this so high", "why is", "what changed"]):
+        return "diagnosis"
+    if any(k in q for k in ["which card", "what card", "keep", "cancel", "review my cards", "2 cards"]):
+        return "cards"
+    if any(k in q for k in ["subscription", "recurring", "ott", "bundle", "consolidat", "airtel black"]):
+        return "subscriptions"
+    if any(k in q for k in ["save", "cut back", "reduce", "spend less", "optimiz"]):
+        return "actions"
+    if any(k in q for k in ["how much", "total", "what are my spends", "summary", "overview"]):
+        return "summary"
+    return "direct"
+
+
 def ask_copilot(question: str, analytics: dict):
     key = get_api_key()
     if not key:
@@ -407,21 +424,41 @@ def ask_copilot(question: str, analytics: dict):
     client = OpenAI(api_key=key)
     prefs = st.session_state.get("user_prefs", {})
     history = st.session_state.get("chat_history", [])[-6:]
-    history_text = "\n".join([f"User: {h['q']}\nAssistant: {h['a']}" for h in history])
+    history_text = "
+".join([f"User: {h['q']}
+Assistant: {h['a']}" for h in history])
+    scope = infer_chat_scope(question)
+    scope_rules = {
+        "diagnosis": "Answer only why the spend is high / what changed. Give 1 short conclusion and at most 3 bullets naming the main drivers. Do not include cards, bundles, or unrelated categories unless directly necessary.",
+        "breakdown": "Answer only with the requested breakdown. Give a short intro and then bullets for the components of that category or merchant. Do not include extra analysis outside that breakdown.",
+        "cards": "Answer only the card question asked. Give a direct recommendation with at most 3 bullets. Do not include subscriptions, month-on-month changes, or anomalies unless directly relevant.",
+        "subscriptions": "Answer only the subscription, recurring, or bundle question asked. Show only the relevant recurring services and the recommendation tied to them. Do not include cards or unrelated spend categories.",
+        "actions": "Give 2 to 3 prioritized actions only. Keep them specific. Do not dump all possible insights.",
+        "summary": "Give a tight summary only. At most 4 bullets. Do not add optimization sections unless the user asked for them.",
+        "direct": "Answer only the specific question asked. Keep the first answer focused and narrow. Do not volunteer adjacent analyses.",
+    }[scope]
     prompt = f"""
 You are CardIQ, an AI financial copilot for an expense tracking product.
-Use only the structured data below. Be practical, specific, and helpful.
+Use only the structured data below. Be practical, specific, and conversational.
 
-RULES:
-- Answer in a structured way.
-- Start with a 1-line conclusion.
-- Then use bullet points.
+GLOBAL RULES:
+- Answer only the specific question the user asked.
+- Do not dump every insight you know.
+- Reveal information gradually through conversation.
+- Keep the first answer tight and focused.
 - Use actual numbers from the data.
 - If the user asks a preference-dependent question and preferences are missing, ask exactly one short clarifying question instead of guessing.
-- Do not make the whole answer about month-on-month analysis unless the question is about that.
 - The product is an expense tracker with AI insights, not a bundle-selling bot.
 - Bundle suggestions should only be based on services the user is already paying for.
-- Keep answers concise but useful.
+- Unless the user explicitly asks for a full summary, keep the answer to 2 to 4 bullets max.
+- End with at most one optional next-step line only when helpful, e.g. 'I can break down online shopping next.'
+- Never include unrelated sections like cards, bundles, subscriptions, anomalies, or month-on-month changes unless they are directly relevant to the exact question.
+
+QUESTION TYPE:
+{scope}
+
+QUESTION-TYPE RULES:
+{scope_rules}
 
 CURRENT USER PREFERENCES:
 {json.dumps(prefs)}
@@ -438,12 +475,11 @@ QUESTION:
     resp = client.chat.completions.create(
         model="gpt-4o",
         messages=[{"role": "user", "content": prompt}],
-        temperature=0.35,
-        max_tokens=500,
+        temperature=0.2,
+        max_tokens=260,
     )
     answer = resp.choices[0].message.content.strip()
 
-    # simple preference memory
     lower_q = question.lower()
     if any(k in lower_q for k in ["i care", "i want", "i prefer", "don't mind", "do not mind", "keep only", "protect essentials", "fewer cards"]):
         prefs[f"pref_{len(prefs)+1}"] = question
