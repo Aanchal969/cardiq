@@ -15,53 +15,60 @@ st.markdown(
     """
 <style>
 :root{
-  --bg:#09111f;
-  --panel:#101a2d;
-  --panel2:#0d1627;
-  --border:#24334f;
-  --text:#edf2ff;
-  --muted:#a9b6d3;
-  --soft:#7e90b5;
-  --accent:#7c8cff;
-  --accent2:#4fd1c5;
-  --accent3:#ff7a7a;
-  --card:#131f36;
+  --bg:#060606;
+  --panel:#0d0d0f;
+  --panel2:#121216;
+  --border:#24242e;
+  --text:#f7f7fb;
+  --muted:#d6d8e4;
+  --soft:#9aa0b5;
+  --accent:#8b5cf6;
+  --accent2:#22d3ee;
+  --accent3:#ff5f6d;
+  --gold:#fbbf24;
+  --card:#101015;
 }
-html, body, [class*="css"], .stApp {background: linear-gradient(180deg,#08111d 0%, #0b1424 100%) !important; color:var(--text)!important; font-family: Inter, system-ui, sans-serif !important;}
+html, body, [class*="css"], .stApp {background: #050507 !important; color:var(--text)!important; font-family: Inter, system-ui, sans-serif !important;}
 #MainMenu, footer, header {visibility:hidden;}
 .block-container{max-width:1180px; padding: 2.2rem 1.3rem 4rem 1.3rem !important;}
 section[data-testid="stSidebar"]{display:none}
 
-.hero{background:linear-gradient(180deg, rgba(19,31,54,0.94) 0%, rgba(14,24,41,0.94) 100%); border:1px solid var(--border); border-radius:26px; padding:28px 38px; box-shadow:0 18px 50px rgba(0,0,0,0.22); position:relative; overflow:hidden;}
-.hero:before{content:''; position:absolute; right:-60px; top:-60px; width:260px; height:260px; background:radial-gradient(circle, rgba(124,140,255,.20) 0%, rgba(124,140,255,0) 70%);}
-.eyebrow{font-size:.82rem; text-transform:uppercase; letter-spacing:.25em; color:var(--soft); font-weight:700;}
-.h1{font-size:4rem; font-weight:800; letter-spacing:-.04em; margin:.6rem 0 .35rem 0; color:var(--text)}
-.brand-accent{color:var(--accent)}
-.sub{font-size:1.14rem; color:var(--muted); line-height:1.65}
+.hero{background:linear-gradient(135deg, rgba(18,18,24,0.98) 0%, rgba(22,18,35,0.98) 45%, rgba(8,22,30,0.98) 100%); border:1px solid var(--border); border-radius:26px; padding:28px 38px; box-shadow:0 22px 60px rgba(0,0,0,0.38); position:relative; overflow:hidden;}
+.hero:before{content:''; position:absolute; right:-80px; top:-80px; width:320px; height:320px; background:radial-gradient(circle, rgba(139,92,246,.28) 0%, rgba(139,92,246,0) 62%);}
+.hero:after{content:''; position:absolute; left:-120px; bottom:-120px; width:300px; height:300px; background:radial-gradient(circle, rgba(34,211,238,.20) 0%, rgba(34,211,238,0) 68%);}
+.eyebrow{font-size:.82rem; text-transform:uppercase; letter-spacing:.25em; color:var(--soft); font-weight:700; position:relative; z-index:2;}
+.h1{font-size:4rem; font-weight:800; letter-spacing:-.04em; margin:.6rem 0 .35rem 0; color:var(--text); position:relative; z-index:2;}
+.brand-accent{background:linear-gradient(135deg,var(--accent),var(--accent2)); -webkit-background-clip:text; background-clip:text; color:transparent}
+.sub{font-size:1.14rem; color:var(--muted); line-height:1.65; position:relative; z-index:2}
 .section-label{font-size:.84rem; color:var(--soft); letter-spacing:.22em; text-transform:uppercase; font-weight:700; margin:1.8rem 0 .9rem 0;}
-.panel{background:rgba(18,28,48,0.92); border:1px solid var(--border); border-radius:20px; padding:22px 24px;}
-.metric{background:rgba(18,28,48,0.92); border:1px solid var(--border); border-radius:22px; padding:22px 24px; min-height:138px;}
+.panel{background:linear-gradient(180deg, rgba(18,18,24,0.96) 0%, rgba(11,11,15,0.96) 100%); border:1px solid var(--border); border-radius:20px; padding:22px 24px; box-shadow:0 10px 30px rgba(0,0,0,.22);}
+.metric{background:linear-gradient(180deg, rgba(18,18,24,0.96) 0%, rgba(11,11,15,0.96) 100%); border:1px solid var(--border); border-radius:22px; padding:22px 24px; min-height:138px; box-shadow:0 10px 30px rgba(0,0,0,.22);}
 .metric-label{font-size:.82rem; color:var(--soft); letter-spacing:.18em; text-transform:uppercase; font-weight:700; margin-bottom:12px;}
 .metric-value{font-size:2.6rem; font-weight:800; letter-spacing:-.03em; color:var(--text);}
 .metric-sub{font-size:1rem; color:var(--muted); margin-top:6px; line-height:1.55}
-.chip{display:inline-flex; align-items:center; padding:8px 14px; border-radius:999px; background:rgba(124,140,255,.14); border:1px solid rgba(124,140,255,.22); color:#dce5ff; font-weight:700; margin:0 8px 8px 0;}
-.bank-card{background:rgba(18,28,48,0.92); border:1px solid var(--border); border-radius:22px; padding:22px 16px; text-align:center; min-height:162px; display:flex; flex-direction:column; justify-content:center; gap:12px;}
-.badge{width:62px;height:62px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:800;margin:0 auto;color:white}
-.helper{font-size:1rem; color:var(--muted); line-height:1.6}
-.chat-box{background:rgba(18,28,48,0.92); border:1px solid var(--border); border-radius:22px; padding:22px 24px;}
-.chat-user{color:#d8e1ff; font-weight:700; margin:12px 0 6px 0;}
-.chat-ai{color:var(--muted); line-height:1.7; padding:14px 16px; background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.05); border-radius:16px; margin-bottom:12px}
-.big-note{font-size:.98rem; color:var(--soft)}
+.chip{display:inline-flex; align-items:center; padding:8px 14px; border-radius:999px; background:linear-gradient(135deg, rgba(139,92,246,.22), rgba(34,211,238,.12)); border:1px solid rgba(139,92,246,.28); color:#f4f6ff; font-weight:700; margin:0 8px 8px 0;}
+.bank-card{background:linear-gradient(180deg, rgba(18,18,24,0.96) 0%, rgba(11,11,15,0.96) 100%); border:1px solid var(--border); border-radius:22px; padding:22px 16px; text-align:center; min-height:162px; display:flex; flex-direction:column; justify-content:center; gap:12px; transition:all .18s ease; cursor:pointer; box-shadow:0 10px 30px rgba(0,0,0,.18);}
+.bank-card:hover{transform:translateY(-3px); border-color:rgba(139,92,246,.55); box-shadow:0 16px 40px rgba(0,0,0,.35), 0 0 0 1px rgba(34,211,238,.22) inset;}
+.badge{width:62px;height:62px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:800;margin:0 auto;color:white; box-shadow: inset 0 0 0 1px rgba(255,255,255,.06)}
+.helper{font-size:1rem; color:var(--muted); line-height:1.7}
+.chat-box{background:linear-gradient(180deg, rgba(18,18,24,0.96) 0%, rgba(11,11,15,0.96) 100%); border:1px solid var(--border); border-radius:22px; padding:22px 24px; box-shadow:0 10px 30px rgba(0,0,0,.22);}
+.chat-user{color:#f4f6ff; font-weight:700; margin:12px 0 6px 0;}
+.chat-ai{color:#eef2ff; line-height:1.72; padding:14px 16px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); border-radius:16px; margin-bottom:12px}
+.big-note{font-size:.98rem; color:var(--muted)}
 .cta-line{display:flex; justify-content:space-between; gap:16px; align-items:flex-start}
 .small-pill{display:inline-flex; align-items:center; border:1px solid var(--border); background:rgba(255,255,255,.03); padding:8px 12px; border-radius:999px; color:var(--muted); margin:0 8px 8px 0; font-size:.94rem}
-[data-testid="stExpander"] details{background:rgba(18,28,48,0.92)!important; border:1px solid var(--border)!important; border-radius:16px!important}
-[data-testid="stExpander"] summary{color:var(--muted)!important; font-weight:700!important}
-button[kind="primary"]{background:linear-gradient(135deg,var(--accent),#9d7bff)!important; border:none!important}
-.stButton>button{border-radius:14px!important; font-weight:700!important; padding:.72rem 1rem!important}
-.stButton>button:not([kind="primary"]){background:rgba(18,28,48,0.92)!important; color:var(--text)!important; border:1px solid var(--border)!important}
-.stCheckbox label{color:var(--muted)!important}
-div[data-testid="stTextInput"] input{background:rgba(255,255,255,.03)!important; border:1px solid var(--border)!important; color:var(--text)!important; border-radius:14px!important; padding:.82rem 1rem!important}
-.note-card{background:rgba(124,140,255,.08); border:1px solid rgba(124,140,255,.18); border-radius:18px; padding:16px 18px; color:var(--muted)}
+[data-testid="stExpander"] details{background:linear-gradient(180deg, rgba(18,18,24,0.96) 0%, rgba(11,11,15,0.96) 100%)!important; border:1px solid var(--border)!important; border-radius:16px!important}
+[data-testid="stExpander"] summary{color:var(--text)!important; font-weight:700!important}
+button[kind="primary"]{background:linear-gradient(135deg,var(--accent3),var(--accent))!important; border:none!important; color:white!important; box-shadow:0 10px 28px rgba(139,92,246,.22)!important}
+.stButton>button{border-radius:14px!important; font-weight:700!important; padding:.72rem 1rem!important; transition:all .16s ease!important}
+.stButton>button:hover{transform:translateY(-1px)!important; border-color:rgba(139,92,246,.55)!important; box-shadow:0 10px 26px rgba(0,0,0,.24)!important}
+.stButton>button:not([kind="primary"]){background:linear-gradient(180deg, rgba(18,18,24,0.96) 0%, rgba(11,11,15,0.96) 100%)!important; color:var(--text)!important; border:1px solid var(--border)!important}
+.stCheckbox label, .stCheckbox div{color:var(--text)!important}
+[data-testid="stTextInputRootElement"]{background:transparent!important}
+div[data-testid="stTextInput"] input{background:rgba(255,255,255,.04)!important; border:1px solid var(--border)!important; color:#ffffff!important; caret-color:#ffffff!important; border-radius:14px!important; padding:.82rem 1rem!important; font-weight:500!important}
+div[data-testid="stTextInput"] input::placeholder{color:#c4cadb!important; opacity:1!important}
+div[data-testid="stTextInput"] label, .stTextInput label{color:var(--text)!important}
+.note-card{background:rgba(139,92,246,.10); border:1px solid rgba(139,92,246,.24); border-radius:18px; padding:16px 18px; color:var(--muted)}
 hr{border:none; height:1px; background:var(--border); margin:1.2rem 0 1.4rem 0}
 </style>
 """,
@@ -309,14 +316,14 @@ def make_line(monthly_df: pd.DataFrame):
     fig = go.Figure()
     fig.add_trace(go.Bar(
         x=monthly_df["Month"], y=monthly_df["Amount"],
-        marker=dict(color=["#253b69"] * (len(monthly_df)-1) + ["#7c8cff"]),
+        marker=dict(color=['#23232b'] * (len(monthly_df)-1) + ['#8b5cf6']),
         hovertemplate="%{x}<br>₹%{y:,.0f}<extra></extra>"
     ))
     fig.update_layout(
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", height=320,
         margin=dict(l=10, r=10, t=20, b=10),
-        xaxis=dict(title="", tickfont=dict(color="#a9b6d3"), showgrid=False, zeroline=False),
-        yaxis=dict(title="", tickfont=dict(color="#a9b6d3"), gridcolor="rgba(255,255,255,.08)", zeroline=False),
+        xaxis=dict(title='', tickfont=dict(color='#d6d8e4'), showgrid=False, zeroline=False),
+        yaxis=dict(title='', tickfont=dict(color='#d6d8e4'), gridcolor='rgba(255,255,255,.10)', zeroline=False),
         showlegend=False,
     )
     return fig
@@ -325,14 +332,14 @@ def make_line(monthly_df: pd.DataFrame):
 def make_donut(cat_df: pd.DataFrame):
     fig = go.Figure(go.Pie(
         labels=cat_df["Category"], values=cat_df["Amount"], hole=0.62,
-        marker=dict(colors=["#7c8cff", "#4fd1c5", "#ff7a7a", "#ffb85c", "#9c84ff", "#56a8ff", "#6ee7b7", "#f472b6", "#cbd5e1"]),
+        marker=dict(colors=['#8b5cf6', '#22d3ee', '#ff5f6d', '#fbbf24', '#9c84ff', '#38bdf8', '#34d399', '#f472b6', '#cbd5e1']),
         textinfo="none",
         hovertemplate="<b>%{label}</b><br>₹%{value:,.0f}<extra></extra>"
     ))
     fig.update_layout(
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", height=320,
         margin=dict(l=10, r=10, t=20, b=10),
-        legend=dict(orientation="v", font=dict(color="#a9b6d3"), bgcolor="rgba(0,0,0,0)")
+        legend=dict(orientation='v', font=dict(color='#e8ebf7'), bgcolor='rgba(0,0,0,0)')
     )
     return fig
 
