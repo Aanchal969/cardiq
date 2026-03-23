@@ -103,13 +103,81 @@ CATEGORIES = ["Food Delivery","Groceries","Online Shopping","Travel",
               "Entertainment","Fuel","Utilities","Health","Other"]
 
 CARD_BENEFITS = {
-    "HDFC Millennia":  {"categories":{"Food Delivery":5.0,"Online Shopping":5.0,"Groceries":1.0,"Travel":1.0,"Entertainment":1.0,"Fuel":1.0,"Utilities":1.0,"Other":1.0},"note":"5% on Amazon, Flipkart, Swiggy, Zomato · 1% elsewhere"},
-    "Axis Flipkart":   {"categories":{"Online Shopping":5.0,"Food Delivery":4.0,"Travel":4.0,"Groceries":1.5,"Entertainment":1.5,"Fuel":1.5,"Utilities":1.5,"Other":1.5},"note":"5% on Flipkart · 4% preferred · 1.5% elsewhere"},
-    "SBI SimplyCLICK": {"categories":{"Online Shopping":2.5,"Food Delivery":2.5,"Entertainment":2.5,"Travel":2.5,"Groceries":1.25,"Fuel":1.25,"Utilities":1.25,"Other":1.25},"note":"10x points on partner sites · 5x elsewhere"},
-    "ICICI Amazon Pay":{"categories":{"Online Shopping":5.0,"Food Delivery":2.0,"Groceries":2.0,"Travel":2.0,"Entertainment":2.0,"Fuel":1.0,"Utilities":1.0,"Other":1.0},"note":"5% on Amazon (Prime) · 2% partners · 1% elsewhere"},
-    "HDFC Regalia":    {"categories":{"Travel":4.0,"Entertainment":3.0,"Food Delivery":3.0,"Online Shopping":3.0,"Groceries":2.0,"Fuel":1.0,"Utilities":1.0,"Other":2.0},"note":"4x travel · 3x dining & entertainment"},
-    "Amex MRCC":       {"categories":{"Online Shopping":2.0,"Food Delivery":2.0,"Groceries":2.0,"Entertainment":2.0,"Travel":2.0,"Fuel":1.0,"Utilities":1.0,"Other":1.0},"note":"5x Membership Rewards on first ₹1500/month"},
+    "HDFC Millennia":   {"categories":{"Food Delivery":5.0,"Online Shopping":5.0,"Groceries":1.0,"Travel":1.0,"Entertainment":1.0,"Fuel":1.0,"Utilities":1.0,"Health":1.0,"Other":1.0},"note":"5% on Amazon, Flipkart, Myntra, Swiggy, Zomato · 1% elsewhere"},
+    "Axis Flipkart":    {"categories":{"Online Shopping":5.0,"Food Delivery":4.0,"Travel":2.0,"Groceries":1.5,"Entertainment":1.5,"Fuel":1.0,"Utilities":1.0,"Health":1.0,"Other":1.5},"note":"5% on Flipkart · strong online-shopping fit"},
+    "SBI SimplyCLICK":  {"categories":{"Online Shopping":3.0,"Food Delivery":2.5,"Entertainment":2.5,"Travel":2.0,"Groceries":1.25,"Fuel":1.0,"Utilities":1.0,"Health":1.0,"Other":1.25},"note":"Good online-spend card with broad merchant coverage"},
+    "ICICI Amazon Pay": {"categories":{"Online Shopping":5.0,"Food Delivery":2.0,"Groceries":2.0,"Travel":2.0,"Entertainment":1.5,"Fuel":1.0,"Utilities":1.0,"Health":1.0,"Other":1.0},"note":"5% on Amazon for Prime users · 1–2% elsewhere"},
+    "HDFC Regalia":     {"categories":{"Travel":4.0,"Entertainment":3.0,"Food Delivery":2.5,"Online Shopping":2.5,"Groceries":1.5,"Fuel":1.0,"Utilities":1.0,"Health":1.0,"Other":2.0},"note":"Travel-oriented rewards card"},
+    "Amex MRCC":        {"categories":{"Online Shopping":2.0,"Food Delivery":2.0,"Groceries":2.0,"Entertainment":2.0,"Travel":2.0,"Fuel":1.0,"Utilities":1.0,"Health":1.0,"Other":1.0},"note":"Points card with milestone-style upside"},
+    "SBI Cashback":     {"categories":{"Online Shopping":5.0,"Food Delivery":5.0,"Groceries":1.0,"Travel":1.0,"Entertainment":1.0,"Fuel":1.0,"Utilities":1.0,"Health":1.0,"Other":1.0},"note":"High cashback on online transactions"},
+    "Axis Ace":         {"categories":{"Utilities":5.0,"Food Delivery":4.0,"Groceries":2.0,"Online Shopping":2.0,"Travel":1.5,"Entertainment":1.5,"Fuel":1.0,"Health":1.5,"Other":1.5},"note":"Strong for bill payments and food delivery"},
+    "HSBC Cashback":    {"categories":{"Food Delivery":10.0,"Groceries":10.0,"Online Shopping":1.5,"Travel":1.5,"Entertainment":1.5,"Fuel":1.0,"Utilities":1.0,"Health":1.0,"Other":1.0},"note":"Useful on dining, groceries, food delivery"},
+    "BPCL SBI Card":    {"categories":{"Fuel":4.5,"Travel":1.0,"Food Delivery":1.0,"Groceries":1.0,"Online Shopping":1.0,"Entertainment":1.0,"Utilities":1.0,"Health":1.0,"Other":1.0},"note":"Fuel-focused rewards card"},
+    "HDFC Tata Neu":    {"categories":{"Groceries":5.0,"Online Shopping":4.0,"Utilities":3.0,"Food Delivery":2.0,"Travel":1.5,"Entertainment":1.5,"Fuel":1.0,"Health":2.0,"Other":1.0},"note":"Useful for Tata ecosystem, groceries, utilities"},
+    "IDFC First Select": {"categories":{"Travel":2.5,"Entertainment":2.0,"Online Shopping":2.0,"Food Delivery":2.0,"Groceries":2.0,"Fuel":1.5,"Utilities":1.5,"Health":1.5,"Other":1.5},"note":"Balanced general-rewards card"},
 }
+
+
+def build_demo_csvs():
+    bank_rows, cc_rows = [], []
+    months = pd.date_range("2024-09-01", periods=6, freq="MS")
+    for m_idx, month_start in enumerate(months):
+        y, m = month_start.year, month_start.month
+        def d(day):
+            return pd.Timestamp(year=y, month=m, day=day).strftime("%Y-%m-%d")
+
+        # Bank transactions
+        bank_rows += [
+            {"Date": d(2), "Description": "Salary Credit", "Amount": 92000, "Type": "CREDIT"},
+            {"Date": d(3), "Description": "Airtel Postpaid Bill", "Amount": -(799 + (m_idx % 2) * 100), "Type": "DEBIT"},
+            {"Date": d(4), "Description": "Airtel Xstream Fiber", "Amount": -999, "Type": "DEBIT"},
+            {"Date": d(5), "Description": "Netflix Subscription", "Amount": -649, "Type": "DEBIT"},
+            {"Date": d(6), "Description": "Spotify Premium", "Amount": -119, "Type": "DEBIT"},
+            {"Date": d(7), "Description": "Amazon Prime Subscription", "Amount": -1499, "Type": "DEBIT"},
+            {"Date": d(8), "Description": "YouTube Premium", "Amount": -189, "Type": "DEBIT"},
+            {"Date": d(9), "Description": "Tata Play DTH Pack", "Amount": -399, "Type": "DEBIT"},
+            {"Date": d(10), "Description": "Swiggy Order #SW8821", "Amount": -(420 + m_idx * 15), "Type": "DEBIT"},
+            {"Date": d(11), "Description": "Zomato Order #ZM4421", "Amount": -(360 + m_idx * 10), "Type": "DEBIT"},
+            {"Date": d(12), "Description": "Big Bazaar Groceries", "Amount": -(3100 + m_idx * 130), "Type": "DEBIT"},
+            {"Date": d(13), "Description": "DMart Groceries", "Amount": -(2700 + m_idx * 120), "Type": "DEBIT"},
+            {"Date": d(14), "Description": "UPI/9876543210@ybl", "Amount": -(220 + m_idx * 25), "Type": "DEBIT"},
+            {"Date": d(15), "Description": "UPI/PAYTM/QRCODE/7654321", "Amount": -(180 + m_idx * 20), "Type": "DEBIT"},
+            {"Date": d(16), "Description": "Electricity Bill BESCOM", "Amount": -(2100 + m_idx * 60), "Type": "DEBIT"},
+            {"Date": d(17), "Description": "Apollo Pharmacy", "Amount": -(890 + m_idx * 30), "Type": "DEBIT"},
+            {"Date": d(18), "Description": "Cult.fit Membership", "Amount": -999, "Type": "DEBIT"},
+            {"Date": d(19), "Description": "UPI/PHONEPE/TXN/5432109", "Amount": -(260 + m_idx * 18), "Type": "DEBIT"},
+            {"Date": d(20), "Description": "MakeMyTrip Hotel Booking", "Amount": -(7000 + m_idx * 250), "Type": "DEBIT"},
+            {"Date": d(22), "Description": "BookMyShow Movies", "Amount": -(840 + m_idx * 20), "Type": "DEBIT"},
+            {"Date": d(24), "Description": "Blinkit Groceries", "Amount": -(1650 + m_idx * 70), "Type": "DEBIT"},
+            {"Date": d(26), "Description": "Petrol Pump HPCL", "Amount": -(3200 + m_idx * 90), "Type": "DEBIT"},
+            {"Date": d(28), "Description": "Freelance Payment Received", "Amount": 12000 if m_idx % 2 == 0 else 0, "Type": "CREDIT"},
+        ]
+
+        # Credit card transactions
+        cc_rows += [
+            {"Date": d(2), "Description": "Amazon Purchase", "Amount": -(5200 + m_idx * 300), "Type": "DEBIT"},
+            {"Date": d(4), "Description": "Myntra Purchase", "Amount": -(3200 + m_idx * 220), "Type": "DEBIT"},
+            {"Date": d(6), "Description": "Flipkart Purchase", "Amount": -(2400 + m_idx * 150), "Type": "DEBIT"},
+            {"Date": d(8), "Description": "Ajio Purchase", "Amount": -(2500 + m_idx * 140), "Type": "DEBIT"},
+            {"Date": d(10), "Description": "Swiggy Order", "Amount": -(410 + m_idx * 18), "Type": "DEBIT"},
+            {"Date": d(11), "Description": "Uber Ride", "Amount": -(220 + m_idx * 10), "Type": "DEBIT"},
+            {"Date": d(12), "Description": "UPI/7766554433@paytm", "Amount": -(480 + m_idx * 20), "Type": "DEBIT"},
+            {"Date": d(14), "Description": "Nykaa Purchase", "Amount": -(1800 + m_idx * 120), "Type": "DEBIT"},
+            {"Date": d(16), "Description": "Amazon Purchase", "Amount": -(3600 + m_idx * 250), "Type": "DEBIT"},
+            {"Date": d(18), "Description": "UPI/GPAY/MERCHANT/6655443", "Amount": -(390 + m_idx * 15), "Type": "DEBIT"},
+            {"Date": d(20), "Description": "MakeMyTrip Flight", "Amount": -(11000 + m_idx * 400), "Type": "DEBIT"},
+            {"Date": d(22), "Description": "BigBasket Groceries", "Amount": -(2900 + m_idx * 120), "Type": "DEBIT"},
+            {"Date": d(24), "Description": "Zomato Order", "Amount": -(500 + m_idx * 16), "Type": "DEBIT"},
+            {"Date": d(26), "Description": "Petrol Pump BPCL", "Amount": -(3800 + m_idx * 110), "Type": "DEBIT"},
+            {"Date": d(28), "Description": "UPI/5544332211@okaxis", "Amount": -(440 + m_idx * 15), "Type": "DEBIT"},
+        ]
+
+    bank_df = pd.DataFrame([r for r in bank_rows if r["Amount"] != 0])
+    cc_df = pd.DataFrame(cc_rows)
+    return bank_df.to_csv(index=False), cc_df.to_csv(index=False)
+
+
+SAMPLE_BANK_CSV, SAMPLE_CC_CSV = build_demo_csvs()
 
 # ══════════════════════════════════════════════════════════════
 # CSS
@@ -125,9 +193,9 @@ st.markdown("""
   --bg3:      #121929;
   --border:   #1E2A3F;
   --border2:  #253450;
-  --text:     #E2E8F4;
-  --muted:    #4A5A7A;
-  --muted2:   #2A3855;
+  --text:     #F7FAFF;
+  --muted:    #B7C4DF;
+  --muted2:   #8EA2C8;
   --accent:   #6C8EF5;
   --green:    #34D399;
   --amber:    #FBBF24;
@@ -145,7 +213,7 @@ section[data-testid="stSidebar"]{display:none}
 .iq-eyebrow{font-size:.7rem;font-weight:500;letter-spacing:.3em;text-transform:uppercase;color:var(--muted)}
 .iq-hero{font-family:'Playfair Display',serif;font-size:clamp(3.2rem,6vw,5rem);font-weight:400;line-height:1;color:var(--text);letter-spacing:-.01em}
 .iq-hero em{font-style:italic;color:var(--accent)}
-.iq-sub{font-size:1rem;font-weight:300;color:var(--muted);line-height:1.8}
+.iq-sub{font-size:1rem;font-weight:400;color:var(--muted);line-height:1.8}
 .iq-label{font-size:.68rem;font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:var(--muted2);margin-bottom:1.25rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)}
 
 /* ── Layout ── */
@@ -202,13 +270,13 @@ section[data-testid="stSidebar"]{display:none}
 .iq-insight::before{content:'';position:absolute;left:0;top:.4rem;bottom:.4rem;width:2px;background:linear-gradient(180deg,var(--accent),var(--violet));border-radius:2px}
 .iq-insight strong{color:var(--text);font-weight:500}
 .iq-row{display:flex;justify-content:space-between;align-items:center;padding:1rem 0;border-bottom:1px solid var(--border)}
-.iq-row-cat{font-size:.95rem;font-weight:400;color:var(--muted);min-width:130px}
+.iq-row-cat{font-size:.95rem;font-weight:500;color:var(--text);min-width:130px}
 .iq-row-card{font-size:.9rem;font-weight:500;color:var(--accent);flex:1;text-align:center;padding:0 1rem}
 .iq-row-val{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:400;color:var(--text);text-align:right;min-width:90px}
 .iq-sub-tag{display:inline-flex;align-items:center;gap:.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:.35rem .9rem;margin:.25rem;font-size:.82rem;color:var(--muted)}
 .iq-sub-tag span{color:var(--green);font-weight:500}
 .iq-chat-user{text-align:right;padding:.6rem 0;font-family:'Playfair Display',serif;font-size:1rem;font-style:italic;color:var(--muted)}
-.iq-chat-ai{padding:.9rem 0 .9rem 1.4rem;border-left:2px solid var(--border2);font-size:1rem;color:var(--muted);line-height:1.75;font-weight:300;margin-bottom:.4rem}
+.iq-chat-ai{padding:.9rem 0 .9rem 1.4rem;border-left:2px solid var(--border2);font-size:1rem;color:var(--text);line-height:1.75;font-weight:400;margin-bottom:.4rem}
 .account-badge{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);background:rgba(108,142,245,.1);border:1px solid rgba(108,142,245,.25);border-radius:4px;padding:.25rem .65rem}
 
 /* ── Inputs ── */
@@ -297,10 +365,160 @@ def load_api_key():
     return secret_key or os.getenv("OPENAI_API_KEY", "")
 
 
+
 def format_profile(profile):
     if not profile:
         return "No user preferences collected yet."
     return json.dumps(profile, ensure_ascii=False)
+
+
+def normalize_merchant(description):
+    desc = str(description).lower()
+    mapping = [
+        ("airtel xstream fiber", "Airtel Broadband"),
+        ("airtel fiber", "Airtel Broadband"),
+        ("airtel postpaid", "Airtel Postpaid"),
+        ("airtel", "Airtel"),
+        ("netflix", "Netflix"),
+        ("spotify", "Spotify"),
+        ("amazon prime", "Amazon Prime"),
+        ("youtube premium", "YouTube Premium"),
+        ("tata play", "DTH"),
+        ("swiggy", "Swiggy"),
+        ("zomato", "Zomato"),
+        ("myntra", "Myntra"),
+        ("ajio", "Ajio"),
+        ("nykaa", "Nykaa"),
+        ("amazon purchase", "Amazon"),
+        ("flipkart", "Flipkart"),
+        ("bescom", "Electricity"),
+        ("hpcl", "Fuel"),
+        ("bpcl", "Fuel"),
+        ("cult.fit", "Cult.fit"),
+        ("bookmyshow", "BookMyShow"),
+        ("makemytrip", "MakeMyTrip"),
+        ("big bazaar", "Groceries"),
+        ("dmart", "Groceries"),
+        ("bigbasket", "Groceries"),
+        ("blinkit", "Groceries"),
+        ("apollo", "Health"),
+        ("uber", "Uber"),
+    ]
+    for needle, label in mapping:
+        if needle in desc:
+            return label
+    if "upi/" in desc:
+        return "Unclear UPI"
+    return str(description)[:40]
+
+
+def compute_monthly_summary(all_debits):
+    if all_debits is None or all_debits.empty:
+        return []
+    df = all_debits.copy()
+    df["Date"] = pd.to_datetime(df["Date"], errors="coerce")
+    df = df.dropna(subset=["Date"])
+    if df.empty:
+        return []
+    df["Month"] = df["Date"].dt.to_period("M").astype(str)
+    out = []
+    for month, grp in df.groupby("Month"):
+        out.append({
+            "month": month,
+            "total_spend": round(float(grp["Amount"].sum()), 0),
+            "top_category": grp.groupby("Category")["Amount"].sum().sort_values(ascending=False).index[0] if "Category" in grp.columns and grp["Category"].fillna("").ne("").any() else "",
+            "top_merchant": grp.assign(Merchant=grp["Description"].apply(normalize_merchant)).groupby("Merchant")["Amount"].sum().sort_values(ascending=False).index[0],
+        })
+    return out[-6:]
+
+
+def detect_recurring_services(all_debits):
+    if all_debits is None or all_debits.empty:
+        return []
+    df = all_debits.copy()
+    df["Date"] = pd.to_datetime(df["Date"], errors="coerce")
+    df = df.dropna(subset=["Date"])
+    if df.empty:
+        return []
+    df["Merchant"] = df["Description"].apply(normalize_merchant)
+    df["Month"] = df["Date"].dt.to_period("M").astype(str)
+    grouped = df.groupby(["Merchant", "Month"], as_index=False)["Amount"].sum()
+    recurring = grouped.groupby("Merchant").agg(
+        months=("Month", "nunique"),
+        avg_monthly=("Amount", "mean"),
+        total=("Amount", "sum")
+    ).reset_index()
+    recurring = recurring[recurring["months"] >= 3].sort_values(["months", "avg_monthly"], ascending=[False, False])
+    return recurring.head(20).to_dict("records")
+
+
+def build_market_opportunities(all_debits, result, owned_cards):
+    opportunities = []
+    recurring = detect_recurring_services(all_debits)
+    recurring_names = {r["Merchant"] for r in recurring}
+    recurring_lookup = {r["Merchant"]: r for r in recurring}
+
+    telecom_stack = {"Airtel Postpaid", "Airtel Broadband", "DTH"}
+    streaming_stack = {"Netflix", "Amazon Prime", "YouTube Premium", "Spotify"}
+    if len(telecom_stack & recurring_names) >= 2 and len(streaming_stack & recurring_names) >= 2:
+        monthly_total = sum(recurring_lookup.get(x, {}).get("avg_monthly", 0) for x in (telecom_stack | streaming_stack))
+        opportunities.append({
+            "type": "bundle_review",
+            "title": "Connectivity + entertainment bundle review",
+            "current_state": "You are paying separately for telecom, broadband/DTH, and OTT services.",
+            "recommendation": "Review bundled plans such as Airtel Black-style combinations instead of paying for each layer separately.",
+            "impact": f"Potential outcome: simpler billing and better value on roughly ₹{monthly_total:,.0f}/month of recurring spend.",
+        })
+
+    video_services = [x for x in ["Netflix", "Amazon Prime", "YouTube Premium"] if x in recurring_names]
+    if len(video_services) >= 2:
+        monthly_total = sum(recurring_lookup.get(x, {}).get("avg_monthly", 0) for x in video_services)
+        opportunities.append({
+            "type": "ott_overlap",
+            "title": "Streaming overlap detected",
+            "current_state": f"You have multiple recurring video subscriptions: {', '.join(video_services)}.",
+            "recommendation": "Keep the services you actively use and review whether one bundle or one primary platform can replace overlap.",
+            "impact": f"Overlap review applies to about ₹{monthly_total:,.0f}/month.",
+        })
+
+    categories = result.get("categories", {}) if isinstance(result, dict) else {}
+    shopping = float(categories.get("Online Shopping", 0) or 0)
+    if shopping >= 30000:
+        best = None
+        for opt in result.get("card_optimizer", []):
+            if opt.get("category") == "Online Shopping":
+                best = opt
+                break
+        rec = f"Shift shopping spend toward {best.get('best_card')} to recover about ₹{best.get('potential_savings',0):,.0f}." if best else "Use a dedicated online-shopping card consistently."
+        opportunities.append({
+            "type": "shopping_optimization",
+            "title": "High online-shopping spend",
+            "current_state": f"Online shopping is already a major category at ₹{shopping:,.0f}.",
+            "recommendation": rec,
+            "impact": "This improves value without pushing you into new spend categories.",
+        })
+
+    utilities = float(categories.get("Utilities", 0) or 0)
+    fuel = float(categories.get("Fuel", 0) or 0)
+    if utilities >= 8000 or fuel >= 10000:
+        opportunities.append({
+            "type": "bills_optimization",
+            "title": "Bills and commute stack can be optimized",
+            "current_state": f"You have meaningful recurring utilities/fuel spend (utilities ₹{utilities:,.0f}, fuel ₹{fuel:,.0f}).",
+            "recommendation": "Map utilities and fuel to specialized cashback cards instead of using a general card everywhere.",
+            "impact": "This is a cleaner savings lever than trying to cut essential usage.",
+        })
+
+    if owned_cards and len(owned_cards) >= 4:
+        opportunities.append({
+            "type": "portfolio_simplification",
+            "title": "Card portfolio can likely be simplified",
+            "current_state": f"You currently track {len(owned_cards)} cards.",
+            "recommendation": "Keep the few cards that dominate high-spend categories and review cards with overlapping value.",
+            "impact": "Lower mental load with limited sacrifice in rewards.",
+        })
+
+    return opportunities
 
 
 def build_data_context(result, all_debits, owned_cards, user_profile):
@@ -310,15 +528,22 @@ def build_data_context(result, all_debits, owned_cards, user_profile):
         for col in ["Date", "Description", "Amount", "Category"]:
             if col not in df.columns:
                 df[col] = "" if col != "Amount" else 0
-        tx_sample = df[["Date", "Description", "Amount", "Category"]].fillna("").to_dict("records")
-    trimmed_sample = tx_sample[:80]
+        df["Merchant"] = df["Description"].apply(normalize_merchant)
+        tx_sample = df[["Date", "Description", "Merchant", "Amount", "Category"]].fillna("").to_dict("records")
+
+    monthly_summary = compute_monthly_summary(all_debits)
+    recurring_services = detect_recurring_services(all_debits)
+    opportunities = build_market_opportunities(all_debits, result, owned_cards)
     card_rules = {card: CARD_BENEFITS[card] for card in owned_cards} if owned_cards else {}
     payload = {
         "analysis": result,
         "owned_cards": owned_cards,
         "card_rules": card_rules,
         "user_profile": user_profile,
-        "transactions_sample": trimmed_sample,
+        "monthly_summary_last_6_months": monthly_summary,
+        "recurring_services": recurring_services,
+        "market_opportunities": opportunities,
+        "transactions_sample": tx_sample[-140:],
     }
     return json.dumps(payload, ensure_ascii=False)
 
@@ -399,9 +624,10 @@ USER REPLY:
     }
     return merged
 
+
 def analyze_with_ai(client, tx_text, owned_cards):
     card_text = "\n".join([f"- {c}: {CARD_BENEFITS[c]['note']}" for c in owned_cards])
-    prompt = f"""You are a sharp financial analyst. Analyze these transactions and return ONLY valid JSON — no markdown.
+    prompt = f"""You are a sharp financial analyst. Analyze these last 6 months of transactions and return ONLY valid JSON — no markdown.
 
 TRANSACTIONS:
 {tx_text}
@@ -422,32 +648,44 @@ Return exactly this structure:
   "subscription_actions": [{{"name":"<string>","amount":<n>,"action":"keep|review|cancel","reason":"<string>"}}],
   "card_portfolio_advice": [{{"card":"<string>","action":"keep|review|cancel","reason":"<string>","estimated_value":<n>}}]
 }}
-Rules: categorize every transaction, optimizer only for spend > 500, insights must cite actual numbers, all amounts in INR.
-For subscription_actions, use reasonable consumer-finance judgment based on spend and overlap.
-For card_portfolio_advice, use the user's owned cards, category fit, and reward overlap. If fee data is unknown, base advice on usage value and overlap only.
-Note: UPI transactions in the data already have a Category column — treat those as ground truth and don't re-categorize them."""
+Rules:
+- Use the 6-month window to identify recurring patterns.
+- Categorize every transaction.
+- Optimizer only for categories with spend > 500.
+- Insights must cite actual numbers.
+- Amounts in INR.
+- For subscription_actions, use reasonable consumer-finance judgment based on spend and overlap.
+- For card_portfolio_advice, use the user's owned cards, category fit, and reward overlap. If fee data is unknown, base advice on usage value and overlap only.
+- UPI transactions may already have a Category column; treat those user tags as ground truth and don't re-categorize them.
+"""
     response = client.chat.completions.create(
         model="gpt-4o",
         messages=[{"role":"user","content":prompt}],
-        temperature=0.3, max_tokens=2000,
+        temperature=0.3, max_tokens=2200,
     )
     raw = re.sub(r"```json\s*|\s*```", "", response.choices[0].message.content.strip()).strip()
     return json.loads(raw)
 
+
 def chat_with_data(client, question, context, user_profile=None):
     prompt = f"""You are CardIQ, an AI financial copilot.
 Your job is to create value beyond the dashboard.
-Answer using the provided data plus user preferences.
 
-Rules:
-- Be specific and decision-oriented.
-- When useful, synthesize across spend, subscriptions, and card usage.
-- Give 3-5 short bullet points when the question is advisory.
-- Name exact subscriptions/cards/categories with amounts whenever available.
-- If the answer depends on user preference and a preference is provided, use it.
-- Do not say 'the data does not provide' unless the answer is truly impossible.
-- If annual fee or card-level usage is unknown, say the advice is usage-based.
-- End with one clear recommended next step when appropriate.
+How to answer:
+- Synthesize across transaction patterns, recurring services, card usage, and detected market opportunities.
+- Prefer recommendation-quality answers over restating totals.
+- When the question is advisory, use this structure:
+  1. Current state
+  2. Best recommendation
+  3. Why it helps
+  4. One next step
+- Use bullets when it improves clarity.
+- Name exact subscriptions/cards/categories/amounts whenever available.
+- Use user preferences if present.
+- Do not push users into new spend categories.
+- Focus on improving value on current behavior first.
+- If advice is usage-based because fee or external market data is incomplete, say that clearly in one line.
+- If you mention a bundle or substitute, frame it as an option to review, not a guaranteed recommendation.
 
 USER PROFILE:
 {format_profile(user_profile or {})}
@@ -461,8 +699,8 @@ QUESTION:
     response = client.chat.completions.create(
         model="gpt-4o",
         messages=[{"role":"user","content":prompt}],
-        temperature=0.4,
-        max_tokens=450,
+        temperature=0.45,
+        max_tokens=550,
     )
     return response.choices[0].message.content.strip()
 
@@ -569,7 +807,7 @@ elif st.session_state.flow_step == "bank_select":
     st.markdown('<div class="iq-body">', unsafe_allow_html=True)
     st.markdown('<div class="iq-label">Step 1 of 3 &nbsp;·&nbsp; Select Bank</div>', unsafe_allow_html=True)
     st.markdown("""<div style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:300;color:#E2E8F4;margin-bottom:.5rem">Which bank are you with?</div>
-    <div class="iq-sub" style="margin-bottom:2rem">Select your primary bank to fetch account and card statements.</div>""", unsafe_allow_html=True)
+    <div class="iq-sub" style="margin-bottom:2rem">Select your primary bank to fetch the last 6 months of account and card statements.</div>""", unsafe_allow_html=True)
 
     cols = st.columns(4)
     for i, bank in enumerate(BANKS):
@@ -804,7 +1042,7 @@ elif st.session_state.flow_step == "analysing":
                     all_debits.at[idx, "Category"] = cat
 
             # Build transaction text — include Category column so AI respects tags
-            tx_text = all_debits[["Date","Description","Amount","Category"]].to_string(index=False, max_rows=120)
+            tx_text = all_debits[["Date","Description","Amount","Category"]].to_string(index=False, max_rows=260)
 
             cards_to_use = st.session_state.owned_cards if st.session_state.owned_cards else list(CARD_BENEFITS.keys())[:3]
             client = OpenAI(api_key=st.session_state.api_key)
@@ -835,7 +1073,7 @@ elif st.session_state.flow_step == "results":
         <div style="display:flex;gap:1.5rem;align-items:center">
             {"".join([f'<span class="account-badge">{c}</span>' for c in (st.session_state.owned_cards or ["No cards"])])}
         </div>
-        <div class="iq-eyebrow" style="color:#2A3855">{tagged_count} UPI payments tagged &nbsp;·&nbsp; March 2024</div>
+        <div class="iq-eyebrow" style="color:#2A3855">{tagged_count} UPI payments tagged &nbsp;·&nbsp; Last 6 months</div>
     </div>""", unsafe_allow_html=True)
 
     st.markdown('<div class="iq-body">', unsafe_allow_html=True)
