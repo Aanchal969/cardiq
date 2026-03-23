@@ -304,7 +304,13 @@ def format_profile(profile):
 
 
 def build_data_context(result, all_debits, owned_cards, user_profile):
-    tx_sample = all_debits[["Date", "Description", "Amount", "Category"]].fillna("").to_dict("records") if all_debits is not None else []
+    tx_sample = []
+    if all_debits is not None and len(all_debits) > 0:
+        df = all_debits.copy()
+        for col in ["Date", "Description", "Amount", "Category"]:
+            if col not in df.columns:
+                df[col] = "" if col != "Amount" else 0
+        tx_sample = df[["Date", "Description", "Amount", "Category"]].fillna("").to_dict("records")
     trimmed_sample = tx_sample[:80]
     card_rules = {card: CARD_BENEFITS[card] for card in owned_cards} if owned_cards else {}
     payload = {
@@ -870,16 +876,6 @@ elif st.session_state.flow_step == "results":
             st.markdown('<div class="iq-label">Recurring Charges</div>', unsafe_allow_html=True)
             st.markdown("".join([f'<div class="iq-sub-tag">{s.get("name","?")} <span>₹{s.get("amount",0):,.0f}/mo</span></div>' for s in subs]), unsafe_allow_html=True)
 
-        sub_actions = r.get("subscription_actions", [])
-        if sub_actions:
-            st.markdown('<div style="height:2rem"></div>', unsafe_allow_html=True)
-            st.markdown('<div class="iq-label">Subscription Advice</div>', unsafe_allow_html=True)
-            for item in sub_actions:
-                action_color = {"keep":"#34D399","review":"#FBBF24","cancel":"#F87171"}.get(item.get("action","review"), "#6C8EF5")
-                st.markdown(f"""<div class="iq-row">
-                    <span class="iq-row-cat">{item.get('name','—')}<br><span style="font-size:.78rem;color:#93A4C3">{item.get('reason','')}</span></span>
-                    <span class="iq-row-card" style="color:{action_color}">{str(item.get('action','review')).upper()}</span>
-                    <span class="iq-row-val">₹{item.get('amount',0):,.0f}</span></div>""", unsafe_allow_html=True)
 
     with tab2:
         st.markdown('<div class="iq-label">Observations</div>', unsafe_allow_html=True)
@@ -898,16 +894,6 @@ elif st.session_state.flow_step == "results":
             <div class="iq-eyebrow" style="color:#2A3855;margin-bottom:.6rem">This month, you left unclaimed</div>
             <div style="font-family:'Playfair Display',serif;font-size:4.8rem;font-weight:300;color:#6C8EF5;line-height:1">₹{total_s:,.0f}</div>
             <div class="iq-sub" style="margin-top:.6rem">Annualised — ₹{int(total_s*12):,.0f} in rewards you never received.</div></div>""", unsafe_allow_html=True)
-        portfolio = r.get("card_portfolio_advice", [])
-        if portfolio:
-            st.markdown('<div class="iq-label">Portfolio Advice</div>', unsafe_allow_html=True)
-            for item in portfolio:
-                action_color = {"keep":"#34D399","review":"#FBBF24","cancel":"#F87171"}.get(item.get("action","review"), "#6C8EF5")
-                st.markdown(f"""<div class="iq-row">
-                    <span class="iq-row-cat">{item.get('card','—')}<br><span style="font-size:.78rem;color:#93A4C3">{item.get('reason','')}</span></span>
-                    <span class="iq-row-card" style="color:{action_color}">{str(item.get('action','review')).upper()}</span>
-                    <span class="iq-row-val">₹{item.get('estimated_value',0):,.0f}</span></div>""", unsafe_allow_html=True)
-            st.markdown('<div style="height:1.5rem"></div>', unsafe_allow_html=True)
         if opt:
             st.markdown('<div class="iq-label">By Category</div>', unsafe_allow_html=True)
             st.markdown("""<div class="iq-row">
@@ -977,7 +963,7 @@ elif st.session_state.flow_step == "results":
                 st.session_state.chat_history.append({"role":"assistant","content":answer})
                 st.rerun()
             except Exception as e:
-                st.error(f"Chat failed: {e}")
+                st.error(f"Chat failed: {str(e)}")
 
     st.markdown('<div style="height:2rem"></div>', unsafe_allow_html=True)
     _,c_disc,_ = st.columns([1,1,1])
