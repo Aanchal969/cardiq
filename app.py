@@ -8,82 +8,8 @@ from io import StringIO
 st.set_page_config(page_title="CardIQ", page_icon="✦", layout="wide", initial_sidebar_state="collapsed")
 
 # ══════════════════════════════════════════════════════════════
-# SAMPLE DATA  (UPI transactions added — ambiguous IDs)
+# SAMPLE DATA  — built dynamically below via build_demo_csvs()
 # ══════════════════════════════════════════════════════════════
-SAMPLE_BANK_CSV = """Date,Description,Amount,Type
-2024-03-01,Swiggy Order #SW8821,-450,DEBIT
-2024-03-02,Amazon Purchase,-2399,DEBIT
-2024-03-02,Salary Credit,85000,CREDIT
-2024-03-03,Zomato Order #ZM4421,-380,DEBIT
-2024-03-04,UPI/9876543210@ybl,-220,DEBIT
-2024-03-04,Netflix Subscription,-649,DEBIT
-2024-03-05,Big Bazaar Groceries,-3200,DEBIT
-2024-03-06,UPI/PAYTM/QRCODE/7654321,-180,DEBIT
-2024-03-07,HDFC Credit Card Bill Payment,-12000,DEBIT
-2024-03-08,Zomato Order #ZM5530,-670,DEBIT
-2024-03-09,UPI/8765432109@okaxis,-3500,DEBIT
-2024-03-09,Spotify Premium,-119,DEBIT
-2024-03-10,Flipkart Purchase,-1899,DEBIT
-2024-03-11,Apollo Pharmacy,-890,DEBIT
-2024-03-11,UPI/GPAY/MERCHANT/4567890,-850,DEBIT
-2024-03-12,DMart Groceries,-2750,DEBIT
-2024-03-13,Amazon Prime Subscription,-1499,DEBIT
-2024-03-13,UPI/7654321098@paytm,-310,DEBIT
-2024-03-14,Zomato Order #ZM6621,-590,DEBIT
-2024-03-15,Reliance Digital,-4500,DEBIT
-2024-03-15,Freelance Payment Received,15000,CREDIT
-2024-03-16,UPI/6543210987@ybl,-480,DEBIT
-2024-03-17,BookMyShow Movies,-840,DEBIT
-2024-03-18,UPI/PHONEPE/TXN/5432109,-260,DEBIT
-2024-03-18,Myntra Purchase,-2199,DEBIT
-2024-03-19,Swiggy Order #SW0012,-550,DEBIT
-2024-03-20,Big Bazaar Groceries,-2900,DEBIT
-2024-03-21,UPI/4321098765@oksbi,-1200,DEBIT
-2024-03-21,YouTube Premium,-189,DEBIT
-2024-03-22,Petrol Pump HPCL,-3500,DEBIT
-2024-03-22,UPI/PAYTM/QRCODE/3210987,-430,DEBIT
-2024-03-23,Amazon Purchase,-3299,DEBIT
-2024-03-24,UPI/2109876543@okicici,-750,DEBIT
-2024-03-24,Cult.fit Membership,-999,DEBIT
-2024-03-25,Zomato Order #ZM8843,-610,DEBIT
-2024-03-26,UPI/GPAY/MERCHANT/1098765,-920,DEBIT
-2024-03-27,MakeMyTrip Hotel Booking,-8500,DEBIT
-2024-03-28,UPI/9087654321@ybl,-290,DEBIT
-2024-03-28,Blinkit Groceries,-1850,DEBIT
-2024-03-29,Swiggy Order #SW0678,-470,DEBIT
-2024-03-30,Electricity Bill BESCOM,-2200,DEBIT
-2024-03-31,Jio Recharge,-299,DEBIT"""
-
-SAMPLE_CC_CSV = """Date,Description,Amount,Type
-2024-03-01,Swiggy Order,-380,DEBIT
-2024-03-02,Amazon Purchase,-5499,DEBIT
-2024-03-04,Zomato Order,-520,DEBIT
-2024-03-05,UPI/PHONEPE/TXN/8877665,-340,DEBIT
-2024-03-06,Myntra Purchase,-3499,DEBIT
-2024-03-08,Swiggy Order,-410,DEBIT
-2024-03-09,BookMyShow,-1200,DEBIT
-2024-03-10,Amazon Purchase,-2199,DEBIT
-2024-03-11,UPI/7766554433@paytm,-480,DEBIT
-2024-03-12,Uber Ride,-220,DEBIT
-2024-03-13,Nykaa Purchase,-1899,DEBIT
-2024-03-14,Swiggy Order,-560,DEBIT
-2024-03-15,Petrol Pump BPCL,-4000,DEBIT
-2024-03-16,Amazon Purchase,-3799,DEBIT
-2024-03-17,UPI/GPAY/MERCHANT/6655443,-390,DEBIT
-2024-03-18,Uber Ride,-280,DEBIT
-2024-03-19,Swiggy Order,-490,DEBIT
-2024-03-20,Flipkart Purchase,-2699,DEBIT
-2024-03-21,MakeMyTrip Flight,-12500,DEBIT
-2024-03-22,Amazon Purchase,-1599,DEBIT
-2024-03-23,UPI/5544332211@okaxis,-440,DEBIT
-2024-03-24,Uber Ride,-190,DEBIT
-2024-03-25,Swiggy Order,-520,DEBIT
-2024-03-26,BigBasket Groceries,-3100,DEBIT
-2024-03-27,Amazon Purchase,-4299,DEBIT
-2024-03-28,UPI/4433221100@ybl,-610,DEBIT
-2024-03-29,Uber Ride,-250,DEBIT
-2024-03-30,Swiggy Order,-470,DEBIT
-2024-03-31,Ajio Purchase,-2899,DEBIT"""
 
 # ══════════════════════════════════════════════════════════════
 # CONSTANTS
@@ -264,6 +190,10 @@ section[data-testid="stSidebar"]{display:none}
 .upi-note strong{color:var(--accent);font-weight:500}
 .prog-bar{height:3px;background:var(--border);border-radius:2px;margin:.5rem 0 .5rem}
 .prog-fill{height:3px;border-radius:2px;background:linear-gradient(90deg,var(--accent),var(--green));transition:width .4s}
+.upi-row{display:grid;grid-template-columns:2fr 1fr 1.2fr;align-items:center;gap:1.5rem;padding:.9rem 0;border-bottom:1px solid var(--border)}
+.upi-id{font-size:.9rem;font-weight:400;color:var(--text);font-family:'Outfit',sans-serif}
+.upi-id span{display:block;font-size:.72rem;color:var(--muted);margin-top:.15rem}
+.upi-amt{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:400;color:var(--text);text-align:right}
 
 /* ── Results ── */
 .iq-insight{padding:1.1rem 0 1.1rem 1.4rem;border-bottom:1px solid var(--border);font-size:1rem;font-weight:300;color:var(--muted);line-height:1.7;position:relative}
@@ -290,6 +220,13 @@ div[data-testid="stSelectbox"] svg{color:var(--accent)!important}
 /* ── Buttons ── */
 div[data-testid="stButton"]>button{background:linear-gradient(135deg,var(--accent),var(--violet))!important;border:none!important;color:#fff!important;border-radius:8px!important;padding:.75rem 2.5rem!important;font-family:'Outfit',sans-serif!important;font-size:.78rem!important;font-weight:600!important;letter-spacing:.12em!important;text-transform:uppercase!important;width:auto!important;transition:all .25s!important;box-shadow:0 4px 15px rgba(108,142,245,.25)!important}
 div[data-testid="stButton"]>button:hover{opacity:.85!important;box-shadow:0 4px 20px rgba(108,142,245,.4)!important}
+/* Bank select buttons — small muted style, not full gradient */
+[data-testid="stButton"]:has(button[title^="Select"]) button{
+    background:var(--bg3)!important;border:1px solid var(--border)!important;
+    color:var(--muted)!important;font-size:.6rem!important;
+    padding:.35rem 1rem!important;letter-spacing:.12em!important;
+    box-shadow:none!important;border-radius:0 0 10px 10px!important;
+}
 
 /* ── Tabs ── */
 .stTabs [data-baseweb="tab-list"]{background:transparent!important;border-bottom:1px solid var(--border)!important;gap:.5rem!important}
@@ -815,15 +752,18 @@ elif st.session_state.flow_step == "bank_select":
             is_sel = st.session_state.selected_bank == bank["name"]
             sel_badge = f'<div class="bank-selected-badge">✓ Selected</div>' if is_sel else ""
             sel_class = "selected" if is_sel else ""
+            # Tile visual
             st.markdown(f"""
-            <div class="bank-tile {sel_class}">
-                <div class="bank-logo-wrap" style="background:{bank['bg']};border:1px solid {bank['color']}44;border-radius:12px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;overflow:hidden">
-                    <div style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.62rem;color:{bank['color']};letter-spacing:.05em">{bank['abbr']}</div>
+            <div class="bank-tile {sel_class}" style="margin-bottom:0;border-bottom:none;border-radius:12px 12px 0 0">
+                <div style="background:{bank['bg']};border:1px solid {bank['color']}55;border-radius:10px;width:48px;height:48px;display:flex;align-items:center;justify-content:center">
+                    <span style="font-size:.7rem;font-weight:700;color:{bank['color']};letter-spacing:.05em">{bank['abbr']}</span>
                 </div>
                 <div class="bank-name-text">{bank['name']}</div>
                 {sel_badge}
             </div>""", unsafe_allow_html=True)
-            if st.button(bank["name"], key=f"bank_{bank['name']}", use_container_width=True):
+            # Invisible full-width button that acts as the click target
+            if st.button("Select", key=f"bank_{bank['name']}", use_container_width=True,
+                         help=f"Select {bank['name']}"):
                 st.session_state.selected_bank = bank["name"]
                 st.rerun()
 
@@ -1182,6 +1122,15 @@ elif st.session_state.flow_step == "results":
                 client = OpenAI(api_key=st.session_state.api_key)
                 message = user_q.strip()
                 st.session_state.chat_history.append({"role":"user","content":message})
+
+                # Ensure context is always built before chat
+                if not st.session_state.data_context and st.session_state.analysis:
+                    st.session_state.data_context = build_data_context(
+                        st.session_state.analysis,
+                        st.session_state.all_debits,
+                        st.session_state.owned_cards or list(CARD_BENEFITS.keys())[:3],
+                        st.session_state.user_profile
+                    )
 
                 if st.session_state.pending_clarification:
                     st.session_state.user_profile = update_profile_from_reply(client, st.session_state.pending_clarification, message, st.session_state.user_profile)
