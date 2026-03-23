@@ -64,9 +64,47 @@ button[kind="primary"]{background:linear-gradient(135deg,var(--accent3),var(--ac
 .stButton>button:hover{transform:translateY(-1px)!important; border-color:rgba(139,92,246,.55)!important; box-shadow:0 10px 26px rgba(0,0,0,.24)!important}
 .stButton>button:not([kind="primary"]){background:linear-gradient(180deg, rgba(18,18,24,0.96) 0%, rgba(11,11,15,0.96) 100%)!important; color:var(--text)!important; border:1px solid var(--border)!important}
 .stCheckbox label, .stCheckbox div{color:var(--text)!important}
-[data-testid="stTextInputRootElement"]{background:transparent!important}
-div[data-testid="stTextInput"] input{background:rgba(255,255,255,.04)!important; border:1px solid var(--border)!important; color:#ffffff!important; caret-color:#ffffff!important; border-radius:14px!important; padding:.82rem 1rem!important; font-weight:500!important}
-div[data-testid="stTextInput"] input::placeholder{color:#c4cadb!important; opacity:1!important}
+[data-testid="stTextInputRootElement"], [data-testid="stTextInput"]{background:transparent!important}
+div[data-testid="stTextInput"] input,
+[data-testid="stTextInputRootElement"] input,
+input[type="text"], input[type="password"], textarea{
+  background:#111318!important;
+  background-color:#111318!important;
+  color:#f8fbff!important;
+  -webkit-text-fill-color:#f8fbff!important;
+  caret-color:#f8fbff!important;
+  border:1px solid var(--border)!important;
+  border-radius:14px!important;
+  padding:.82rem 1rem!important;
+  font-weight:500!important;
+  box-shadow:none!important;
+}
+div[data-testid="stTextInput"] input::placeholder,
+[data-testid="stTextInputRootElement"] input::placeholder,
+input[type="text"]::placeholder,
+input[type="password"]::placeholder,
+textarea::placeholder{
+  color:#aeb7cb!important;
+  -webkit-text-fill-color:#aeb7cb!important;
+  opacity:1!important;
+}
+div[data-testid="stTextInput"] input:focus,
+[data-testid="stTextInputRootElement"] input:focus,
+input[type="text"]:focus,
+input[type="password"]:focus,
+textarea:focus{
+  border-color:rgba(139,92,246,.75)!important;
+  box-shadow:0 0 0 3px rgba(139,92,246,.16)!important;
+  outline:none!important;
+}
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill{
+  -webkit-text-fill-color:#f8fbff!important;
+  -webkit-box-shadow:0 0 0px 1000px #111318 inset!important;
+  transition:background-color 9999s ease-in-out 0s!important;
+}
 div[data-testid="stTextInput"] label, .stTextInput label{color:var(--text)!important}
 .note-card{background:rgba(139,92,246,.10); border:1px solid rgba(139,92,246,.24); border-radius:18px; padding:16px 18px; color:var(--muted)}
 hr{border:none; height:1px; background:var(--border); margin:1.2rem 0 1.4rem 0}
