@@ -126,9 +126,9 @@ section[data-testid="stSidebar"]{display:none}
 .cred-sub{font-family:'Inter',sans-serif;font-size:.875rem;font-weight:300;color:#4A4238;letter-spacing:.04em;line-height:1.9}
 .cred-section-label{font-size:.58rem;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:#3A3228;margin-bottom:1.5rem;padding-bottom:.75rem;border-bottom:1px solid #130F0A}
 
-.cred-hero-section{padding:5rem 6rem 4rem;border-bottom:1px solid #0F0D0A;position:relative;overflow:hidden}
+.cred-hero-section{padding:2.5rem 6rem 2rem;border-bottom:1px solid #0F0D0A;position:relative;overflow:hidden}
 .cred-hero-section::after{content:'';position:absolute;top:-100px;right:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(201,169,110,.05) 0%,transparent 65%);pointer-events:none}
-.cred-body-section{padding:3rem 6rem}
+.cred-body-section{padding:2rem 6rem}
 .cred-divider{height:1px;background:#0F0D0A}
 
 .cred-card{background:#080604;border:1px solid #170F0A;padding:1.75rem 2rem;position:relative;overflow:hidden}
@@ -191,8 +191,9 @@ div[data-testid="stButton"]>button:hover{background:#C9A96E!important;color:#050
 .stTabs [data-baseweb="tab"]{background:transparent!important;color:#3A3228!important;font-size:.6rem!important;letter-spacing:.25em!important;text-transform:uppercase!important;font-family:'Inter',sans-serif!important;font-weight:500!important;padding:.85rem 2rem!important;border:none!important}
 .stTabs [aria-selected="true"]{color:#C9A96E!important;border-bottom:1px solid #C9A96E!important}
 .stTabs [data-baseweb="tab-panel"]{background:transparent!important;padding:2rem 0!important}
-details{background:transparent!important;border:none!important;border-bottom:1px solid #130F0A!important;border-radius:0!important}
-details summary{font-size:.6rem!important;letter-spacing:.25em!important;text-transform:uppercase!important;color:#3A3228!important;font-family:'Inter',sans-serif!important;padding:1rem 0!important}
+details{background:#080604!important;border:none!important;border-bottom:1px solid #130F0A!important;border-radius:0!important;padding:0 6rem!important}
+details summary{font-size:.6rem!important;letter-spacing:.25em!important;text-transform:uppercase!important;color:#3A3228!important;font-family:'Inter',sans-serif!important;padding:.75rem 0!important;cursor:pointer!important}
+details>div{background:#080604!important;padding:.5rem 0 1rem!important}
 .stSpinner>div{border-top-color:#C9A96E!important}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:#050505}::-webkit-scrollbar-thumb{background:#170F0A}
 div[data-testid="stForm"]{background:transparent!important;border:none!important;padding:0!important}
@@ -321,18 +322,19 @@ for k, v in defaults.items():
 # ══════════════════════════════════════════════════════════════
 st.markdown("""
 <div class="cred-hero-section">
-    <div class="cred-eyebrow" style="margin-bottom:2.5rem">AI &nbsp;·&nbsp; Finance &nbsp;·&nbsp; India</div>
-    <div class="cred-hero">Card<em>IQ</em></div>
-    <div style="height:2.5rem"></div>
-    <div class="cred-sub">Know where your money goes.<br>Know what you're leaving behind.</div>
+    <div>
+        <div class="cred-eyebrow" style="margin-bottom:1.2rem">AI &nbsp;·&nbsp; Finance &nbsp;·&nbsp; India</div>
+        <div class="cred-hero">Card<em>IQ</em></div>
+    </div>
+    <div style="padding-bottom:0.5rem">
+        <div class="cred-sub">Know where your money goes.<br>Know what you're leaving behind.</div>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown('<div style="padding:0 6rem">', unsafe_allow_html=True)
 with st.expander("✦  CONNECT  —  Enter OpenAI API Key"):
     api_input = st.text_input("", type="password", placeholder="sk-...", value=st.session_state.api_key, label_visibility="collapsed")
     if api_input: st.session_state.api_key = api_input
-st.markdown('</div>', unsafe_allow_html=True)
 st.markdown('<div class="cred-divider"></div>', unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════
@@ -342,8 +344,8 @@ if st.session_state.flow_step == "home":
     st.markdown('<div class="cred-body-section">', unsafe_allow_html=True)
     st.markdown('<div class="cred-section-label">Get Started</div>', unsafe_allow_html=True)
     st.markdown("""
-    <div style="margin-bottom:2.5rem">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;color:#F5EDD8;margin-bottom:.75rem">Connect your bank account.</div>
+    <div style="margin-bottom:2rem">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;color:#F5EDD8;margin-bottom:.5rem">Connect your bank account.</div>
         <div class="cred-sub">We use India's Account Aggregator framework to securely fetch your transactions.<br>Read-only access. No credentials stored. Disconnect anytime.</div>
     </div>
     """, unsafe_allow_html=True)
@@ -353,7 +355,7 @@ if st.session_state.flow_step == "home":
             st.session_state.flow_step = "bank_select"
             st.rerun()
     st.markdown("""
-    <div style="margin-top:3rem;display:flex;gap:3rem">
+    <div style="margin-top:2rem;display:flex;gap:3rem">
         <div style="display:flex;align-items:center;gap:.75rem"><span style="color:#C9A96E;font-size:.75rem">✦</span><span class="cred-sub" style="font-size:.72rem">256-bit encryption</span></div>
         <div style="display:flex;align-items:center;gap:.75rem"><span style="color:#C9A96E;font-size:.75rem">✦</span><span class="cred-sub" style="font-size:.72rem">Read-only access</span></div>
         <div style="display:flex;align-items:center;gap:.75rem"><span style="color:#C9A96E;font-size:.75rem">✦</span><span class="cred-sub" style="font-size:.72rem">RBI Account Aggregator framework</span></div>
