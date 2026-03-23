@@ -89,14 +89,14 @@ SAMPLE_CC_CSV = """Date,Description,Amount,Type
 # CONSTANTS
 # ══════════════════════════════════════════════════════════════
 BANKS = [
-    {"name":"HDFC Bank",  "abbr":"HDFC",  "color":"#004C8F","bg":"#001E3C","emoji":"🏦"},
-    {"name":"ICICI Bank", "abbr":"ICICI", "color":"#F96B21","bg":"#2D1400","emoji":"🏦"},
-    {"name":"SBI",        "abbr":"SBI",   "color":"#2251A3","bg":"#0D1B3E","emoji":"🏦"},
-    {"name":"Axis Bank",  "abbr":"AXIS",  "color":"#97144D","bg":"#2D0518","emoji":"🏦"},
-    {"name":"Kotak Bank", "abbr":"KOTAK", "color":"#EF4123","bg":"#2D0A00","emoji":"🏦"},
-    {"name":"IndusInd",   "abbr":"INDUS", "color":"#00529B","bg":"#001E3C","emoji":"🏦"},
-    {"name":"Yes Bank",   "abbr":"YES",   "color":"#00447C","bg":"#001829","emoji":"🏦"},
-    {"name":"IDFC First", "abbr":"IDFC",  "color":"#9B1B30","bg":"#2D0810","emoji":"🏦"},
+    {"name":"HDFC Bank",  "abbr":"HDFC",  "color":"#004C8F","bg":"#001E3C","logo":"https://logo.clearbit.com/hdfcbank.com"},
+    {"name":"ICICI Bank", "abbr":"ICICI", "color":"#F96B21","bg":"#2D1400","logo":"https://logo.clearbit.com/icicibank.com"},
+    {"name":"SBI",        "abbr":"SBI",   "color":"#2251A3","bg":"#0D1B3E","logo":"https://logo.clearbit.com/sbi.co.in"},
+    {"name":"Axis Bank",  "abbr":"AXIS",  "color":"#97144D","bg":"#2D0518","logo":"https://logo.clearbit.com/axisbank.com"},
+    {"name":"Kotak Bank", "abbr":"KOTAK", "color":"#EF4123","bg":"#2D0A00","logo":"https://logo.clearbit.com/kotak.com"},
+    {"name":"IndusInd",   "abbr":"INDUS", "color":"#00529B","bg":"#001E3C","logo":"https://logo.clearbit.com/indusind.com"},
+    {"name":"Yes Bank",   "abbr":"YES",   "color":"#00447C","bg":"#001829","logo":"https://logo.clearbit.com/yesbank.in"},
+    {"name":"IDFC First", "abbr":"IDFC",  "color":"#9B1B30","bg":"#2D0810","logo":"https://logo.clearbit.com/idfcfirstbank.com"},
 ]
 
 CATEGORIES = ["Food Delivery","Groceries","Online Shopping","Travel",
@@ -142,11 +142,11 @@ html,body,[class*="css"],.stApp{background-color:var(--bg)!important;color:var(-
 section[data-testid="stSidebar"]{display:none}
 
 /* ── Typography ── */
-.iq-eyebrow{font-size:.6rem;font-weight:500;letter-spacing:.3em;text-transform:uppercase;color:var(--muted)}
-.iq-hero{font-family:'Playfair Display',serif;font-size:clamp(2.8rem,6vw,4.5rem);font-weight:400;line-height:1;color:var(--text);letter-spacing:-.01em}
+.iq-eyebrow{font-size:.7rem;font-weight:500;letter-spacing:.3em;text-transform:uppercase;color:var(--muted)}
+.iq-hero{font-family:'Playfair Display',serif;font-size:clamp(3.2rem,6vw,5rem);font-weight:400;line-height:1;color:var(--text);letter-spacing:-.01em}
 .iq-hero em{font-style:italic;color:var(--accent)}
-.iq-sub{font-size:.875rem;font-weight:300;color:var(--muted);line-height:1.8}
-.iq-label{font-size:.58rem;font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:var(--muted2);margin-bottom:1.25rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)}
+.iq-sub{font-size:1rem;font-weight:300;color:var(--muted);line-height:1.8}
+.iq-label{font-size:.68rem;font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:var(--muted2);margin-bottom:1.25rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)}
 
 /* ── Layout ── */
 .iq-hero-wrap{padding:2.5rem 5rem 2rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;position:relative;overflow:hidden}
@@ -157,8 +157,8 @@ section[data-testid="stSidebar"]{display:none}
 /* ── Cards ── */
 .iq-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.5rem 1.75rem;position:relative;overflow:hidden}
 .iq-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--violet))}
-.iq-card-label{font-size:.58rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
-.iq-metric{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:400;color:var(--text);line-height:1}
+.iq-card-label{font-size:.7rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+.iq-metric{font-family:'Playfair Display',serif;font-size:2.6rem;font-weight:400;color:var(--text);line-height:1}
 .iq-metric.green{color:var(--green)}
 .iq-metric.amber{color:var(--amber)}
 .iq-metric.violet{color:var(--violet)}
@@ -168,7 +168,7 @@ section[data-testid="stSidebar"]{display:none}
 .bank-tile:hover{border-color:var(--border2);background:var(--bg3)}
 .bank-tile.selected{border-color:var(--accent);background:var(--bg3);box-shadow:0 0 0 1px var(--accent) inset}
 .bank-logo{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem;letter-spacing:.05em}
-.bank-name-text{font-size:.68rem;font-weight:400;color:var(--muted);letter-spacing:.05em}
+.bank-name-text{font-size:.78rem;font-weight:400;color:var(--muted);letter-spacing:.05em}
 .bank-selected-badge{font-size:.55rem;letter-spacing:.15em;color:var(--accent);font-weight:600;text-transform:uppercase}
 
 /* ── Consent ── */
@@ -176,12 +176,12 @@ section[data-testid="stSidebar"]{display:none}
 .iq-consent::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--green))}
 .consent-row{display:flex;gap:1rem;padding:.9rem 0;border-bottom:1px solid var(--border)}
 .consent-icon{font-size:.9rem;flex-shrink:0;margin-top:.1rem}
-.consent-txt{font-size:.82rem;color:var(--muted);line-height:1.6;font-weight:300}
+.consent-txt{font-size:.92rem;color:var(--muted);line-height:1.6;font-weight:300}
 .consent-txt strong{color:var(--text);font-weight:500}
 
 /* ── Loading ── */
 .loading-wrap{text-align:center;padding:4rem 2rem}
-.loading-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:400;color:var(--text);margin-bottom:.4rem}
+.loading-title{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:400;color:var(--text);margin-bottom:.4rem}
 .loading-sub{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:1.2rem}
 @keyframes pulse{0%,100%{opacity:.2}50%{opacity:1}}
 .pulse-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin:0 3px;animation:pulse 1.4s ease-in-out infinite}
@@ -192,40 +192,40 @@ section[data-testid="stSidebar"]{display:none}
 .progress-fill{height:2px;border-radius:2px;background:linear-gradient(90deg,var(--accent),var(--violet));transition:width .5s}
 
 /* ── UPI review ── */
-.upi-note{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:1rem 1.5rem;margin-bottom:1.5rem;font-size:.83rem;color:var(--muted);line-height:1.6}
+.upi-note{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:1rem 1.5rem;margin-bottom:1.5rem;font-size:.95rem;color:var(--muted);line-height:1.6}
 .upi-note strong{color:var(--accent);font-weight:500}
 .prog-bar{height:3px;background:var(--border);border-radius:2px;margin:.5rem 0 .5rem}
 .prog-fill{height:3px;border-radius:2px;background:linear-gradient(90deg,var(--accent),var(--green));transition:width .4s}
 
 /* ── Results ── */
-.iq-insight{padding:1.1rem 0 1.1rem 1.4rem;border-bottom:1px solid var(--border);font-size:.875rem;font-weight:300;color:var(--muted);line-height:1.7;position:relative}
+.iq-insight{padding:1.1rem 0 1.1rem 1.4rem;border-bottom:1px solid var(--border);font-size:1rem;font-weight:300;color:var(--muted);line-height:1.7;position:relative}
 .iq-insight::before{content:'';position:absolute;left:0;top:.4rem;bottom:.4rem;width:2px;background:linear-gradient(180deg,var(--accent),var(--violet));border-radius:2px}
 .iq-insight strong{color:var(--text);font-weight:500}
 .iq-row{display:flex;justify-content:space-between;align-items:center;padding:1rem 0;border-bottom:1px solid var(--border)}
-.iq-row-cat{font-size:.82rem;font-weight:400;color:var(--muted);min-width:130px}
-.iq-row-card{font-size:.8rem;font-weight:500;color:var(--accent);flex:1;text-align:center;padding:0 1rem}
-.iq-row-val{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:400;color:var(--text);text-align:right;min-width:90px}
-.iq-sub-tag{display:inline-flex;align-items:center;gap:.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:.35rem .9rem;margin:.25rem;font-size:.72rem;color:var(--muted)}
+.iq-row-cat{font-size:.95rem;font-weight:400;color:var(--muted);min-width:130px}
+.iq-row-card{font-size:.9rem;font-weight:500;color:var(--accent);flex:1;text-align:center;padding:0 1rem}
+.iq-row-val{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:400;color:var(--text);text-align:right;min-width:90px}
+.iq-sub-tag{display:inline-flex;align-items:center;gap:.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:.35rem .9rem;margin:.25rem;font-size:.82rem;color:var(--muted)}
 .iq-sub-tag span{color:var(--green);font-weight:500}
 .iq-chat-user{text-align:right;padding:.6rem 0;font-family:'Playfair Display',serif;font-size:1rem;font-style:italic;color:var(--muted)}
-.iq-chat-ai{padding:.9rem 0 .9rem 1.4rem;border-left:2px solid var(--border2);font-size:.875rem;color:var(--muted);line-height:1.75;font-weight:300;margin-bottom:.4rem}
-.account-badge{font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);background:rgba(108,142,245,.1);border:1px solid rgba(108,142,245,.25);border-radius:4px;padding:.25rem .65rem}
+.iq-chat-ai{padding:.9rem 0 .9rem 1.4rem;border-left:2px solid var(--border2);font-size:1rem;color:var(--muted);line-height:1.75;font-weight:300;margin-bottom:.4rem}
+.account-badge{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);background:rgba(108,142,245,.1);border:1px solid rgba(108,142,245,.25);border-radius:4px;padding:.25rem .65rem}
 
 /* ── Inputs ── */
-div[data-testid="stTextInput"] input{background:var(--bg2)!important;border:1px solid var(--border)!important;border-radius:8px!important;color:var(--text)!important;font-family:'Outfit',sans-serif!important;font-size:.9rem!important;font-weight:300!important;padding:.65rem 1rem!important;box-shadow:none!important}
+div[data-testid="stTextInput"] input{background:var(--bg2)!important;border:1px solid var(--border)!important;border-radius:8px!important;color:var(--text)!important;font-family:'Outfit',sans-serif!important;font-size:1rem!important;font-weight:300!important;padding:.65rem 1rem!important;box-shadow:none!important}
 div[data-testid="stTextInput"] input:focus{border-color:var(--accent)!important;outline:none!important;box-shadow:0 0 0 3px rgba(108,142,245,.12)!important}
 .stCheckbox{margin:.15rem 0!important}
-.stCheckbox>label>div{color:var(--muted)!important;font-size:.82rem!important;font-family:'Outfit',sans-serif!important;font-weight:400!important}
+.stCheckbox>label>div{color:var(--muted)!important;font-size:.92rem!important;font-family:'Outfit',sans-serif!important;font-weight:400!important}
 div[data-testid="stSelectbox"]>div>div{background:var(--bg2)!important;border:1px solid var(--border)!important;border-radius:8px!important;color:var(--text)!important;font-family:'Outfit',sans-serif!important;font-size:.8rem!important}
 div[data-testid="stSelectbox"] svg{color:var(--accent)!important}
 
 /* ── Buttons ── */
-div[data-testid="stButton"]>button{background:linear-gradient(135deg,var(--accent),var(--violet))!important;border:none!important;color:#fff!important;border-radius:8px!important;padding:.75rem 2.5rem!important;font-family:'Outfit',sans-serif!important;font-size:.72rem!important;font-weight:600!important;letter-spacing:.15em!important;text-transform:uppercase!important;width:auto!important;transition:all .25s!important;box-shadow:0 4px 15px rgba(108,142,245,.25)!important}
+div[data-testid="stButton"]>button{background:linear-gradient(135deg,var(--accent),var(--violet))!important;border:none!important;color:#fff!important;border-radius:8px!important;padding:.75rem 2.5rem!important;font-family:'Outfit',sans-serif!important;font-size:.78rem!important;font-weight:600!important;letter-spacing:.12em!important;text-transform:uppercase!important;width:auto!important;transition:all .25s!important;box-shadow:0 4px 15px rgba(108,142,245,.25)!important}
 div[data-testid="stButton"]>button:hover{opacity:.85!important;box-shadow:0 4px 20px rgba(108,142,245,.4)!important}
 
 /* ── Tabs ── */
 .stTabs [data-baseweb="tab-list"]{background:transparent!important;border-bottom:1px solid var(--border)!important;gap:.5rem!important}
-.stTabs [data-baseweb="tab"]{background:transparent!important;color:var(--muted)!important;font-size:.7rem!important;letter-spacing:.18em!important;text-transform:uppercase!important;font-family:'Outfit',sans-serif!important;font-weight:500!important;padding:.75rem 1.5rem!important;border:none!important;border-radius:0!important}
+.stTabs [data-baseweb="tab"]{background:transparent!important;color:var(--muted)!important;font-size:.78rem!important;letter-spacing:.18em!important;text-transform:uppercase!important;font-family:'Outfit',sans-serif!important;font-weight:500!important;padding:.75rem 1.5rem!important;border:none!important;border-radius:0!important}
 .stTabs [aria-selected="true"]{color:var(--accent)!important;border-bottom:2px solid var(--accent)!important}
 .stTabs [data-baseweb="tab-panel"]{background:transparent!important;padding:1.5rem 0!important}
 
@@ -388,7 +388,7 @@ if st.session_state.flow_step == "home":
     st.markdown('<div class="iq-label">Get Started</div>', unsafe_allow_html=True)
     st.markdown("""
     <div style="margin-bottom:2rem">
-        <div style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:300;color:#E2E8F4;margin-bottom:.5rem">Connect your bank account.</div>
+        <div style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:300;color:#E2E8F4;margin-bottom:.5rem">Connect your bank account.</div>
         <div class="iq-sub">We use India's Account Aggregator framework to securely fetch your transactions.<br>Read-only access. No credentials stored. Disconnect anytime.</div>
     </div>
     """, unsafe_allow_html=True)
@@ -399,10 +399,10 @@ if st.session_state.flow_step == "home":
             st.rerun()
     st.markdown("""
     <div style="margin-top:2rem;display:flex;gap:3rem">
-        <div style="display:flex;align-items:center;gap:.75rem"><span style="color:#6C8EF5;font-size:.75rem">✦</span><span class="iq-sub" style="font-size:.72rem">256-bit encryption</span></div>
-        <div style="display:flex;align-items:center;gap:.75rem"><span style="color:#6C8EF5;font-size:.75rem">✦</span><span class="iq-sub" style="font-size:.72rem">Read-only access</span></div>
-        <div style="display:flex;align-items:center;gap:.75rem"><span style="color:#6C8EF5;font-size:.75rem">✦</span><span class="iq-sub" style="font-size:.72rem">RBI Account Aggregator framework</span></div>
-        <div style="display:flex;align-items:center;gap:.75rem"><span style="color:#6C8EF5;font-size:.75rem">✦</span><span class="iq-sub" style="font-size:.72rem">Data never stored</span></div>
+        <div style="display:flex;align-items:center;gap:.75rem"><span style="color:#6C8EF5;font-size:.75rem">✦</span><span class="iq-sub" style="font-size:.85rem">256-bit encryption</span></div>
+        <div style="display:flex;align-items:center;gap:.75rem"><span style="color:#6C8EF5;font-size:.75rem">✦</span><span class="iq-sub" style="font-size:.85rem">Read-only access</span></div>
+        <div style="display:flex;align-items:center;gap:.75rem"><span style="color:#6C8EF5;font-size:.75rem">✦</span><span class="iq-sub" style="font-size:.85rem">RBI Account Aggregator framework</span></div>
+        <div style="display:flex;align-items:center;gap:.75rem"><span style="color:#6C8EF5;font-size:.75rem">✦</span><span class="iq-sub" style="font-size:.85rem">Data never stored</span></div>
     </div>""", unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -412,7 +412,7 @@ if st.session_state.flow_step == "home":
 elif st.session_state.flow_step == "bank_select":
     st.markdown('<div class="iq-body">', unsafe_allow_html=True)
     st.markdown('<div class="iq-label">Step 1 of 3 &nbsp;·&nbsp; Select Bank</div>', unsafe_allow_html=True)
-    st.markdown("""<div style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:300;color:#E2E8F4;margin-bottom:.5rem">Which bank are you with?</div>
+    st.markdown("""<div style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:300;color:#E2E8F4;margin-bottom:.5rem">Which bank are you with?</div>
     <div class="iq-sub" style="margin-bottom:2rem">Select your primary bank to fetch account and card statements.</div>""", unsafe_allow_html=True)
 
     cols = st.columns(4)
@@ -423,8 +423,12 @@ elif st.session_state.flow_step == "bank_select":
             sel_class = "selected" if is_sel else ""
             st.markdown(f"""
             <div class="bank-tile {sel_class}">
-                <div class="bank-logo" style="background:{bank['bg']};color:{bank['color']};border:1px solid {bank['color']}33">
-                    {bank['abbr']}
+                <div class="bank-logo-wrap" style="background:{bank['bg']};border:1px solid {bank['color']}44;border-radius:12px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;overflow:hidden">
+                    <img src="{bank['logo']}" 
+                         style="width:36px;height:36px;object-fit:contain;border-radius:6px"
+                         onerror="this.style.display='none';this.nextSibling.style.display='flex'"
+                         alt="{bank['name']}">
+                    <div style="display:none;width:36px;height:36px;align-items:center;justify-content:center;font-weight:700;font-size:.62rem;color:{bank['color']};letter-spacing:.05em">{bank['abbr']}</div>
                 </div>
                 <div class="bank-name-text">{bank['name']}</div>
                 {sel_badge}
@@ -450,7 +454,7 @@ elif st.session_state.flow_step == "bank_select":
 elif st.session_state.flow_step == "card_select":
     st.markdown('<div class="iq-body">', unsafe_allow_html=True)
     st.markdown('<div class="iq-label">Step 2 of 3 &nbsp;·&nbsp; Your Credit Cards</div>', unsafe_allow_html=True)
-    st.markdown(f"""<div style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:300;color:#E2E8F4;margin-bottom:.5rem">Which cards do you use?</div>
+    st.markdown(f"""<div style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:300;color:#E2E8F4;margin-bottom:.5rem">Which cards do you use?</div>
     <div class="iq-sub" style="margin-bottom:2rem">Connected to <span style="color:#6C8EF5">{st.session_state.selected_bank}</span>. Select your credit cards for reward optimization.</div>""", unsafe_allow_html=True)
 
     owned = []
@@ -486,7 +490,7 @@ elif st.session_state.flow_step == "consent":
             <div class="consent-row"><span class="consent-icon">✦</span><div class="consent-txt"><strong>No credentials shared</strong> — CardIQ never sees your PIN, password, or OTP.</div></div>
             <div class="consent-row" style="border:none"><span class="consent-icon">✦</span><div class="consent-txt"><strong>One-time consent</strong> — Access expires after this session. Revoke anytime from your bank app.</div></div>
             <div style="margin-top:1.5rem;padding:1rem;background:#080C14;border:1px solid #1E2A3F">
-                <div class="iq-sub" style="font-size:.68rem;color:#2A3855">This consent is governed by the RBI Account Aggregator framework under NBFC-AA regulations. CardIQ is a registered Financial Information User (FIU).</div>
+                <div class="iq-sub" style="font-size:.78rem;color:#2A3855">This consent is governed by the RBI Account Aggregator framework under NBFC-AA regulations. CardIQ is a registered Financial Information User (FIU).</div>
             </div></div>""", unsafe_allow_html=True)
         st.markdown('<div style="height:1.5rem"></div>', unsafe_allow_html=True)
         cb1, cb2 = st.columns(2)
@@ -555,7 +559,7 @@ elif st.session_state.flow_step == "upi_review":
     st.markdown('<div class="iq-label">Quick Review &nbsp;·&nbsp; UPI Transactions</div>', unsafe_allow_html=True)
 
     st.markdown(f"""
-    <div style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:300;color:#E2E8F4;margin-bottom:.5rem">
+    <div style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:300;color:#E2E8F4;margin-bottom:.5rem">
         We found <em>{n}</em> UPI payments we couldn't identify.
     </div>
     <div class="progress-track" style="margin:1rem 0 0">
@@ -711,7 +715,7 @@ elif st.session_state.flow_step == "results":
                 pct = int(amt/total*100)
                 st.markdown(f"""<div class="iq-row">
                     <span class="iq-row-cat">{cat}</span>
-                    <span style="font-family:'Playfair Display',serif;font-size:1.1rem;color:#2A3855">{pct}%</span>
+                    <span style="font-family:'Playfair Display',serif;font-size:1.2rem;color:#2A3855">{pct}%</span>
                     <span class="iq-row-val">₹{amt:,.0f}</span></div>""", unsafe_allow_html=True)
         if subs:
             st.markdown('<div style="height:2rem"></div>', unsafe_allow_html=True)
@@ -726,14 +730,14 @@ elif st.session_state.flow_step == "results":
         if rec:
             st.markdown(f"""<div style="margin-top:2.5rem;padding:2rem 2.5rem;border:1px solid rgba(201,169,110,.15);background:#0D1220">
                 <div class="iq-eyebrow" style="color:#6C8EF5;margin-bottom:1rem">Primary Recommendation</div>
-                <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:300;color:#C8D4F0;line-height:1.6">{rec}</div></div>""", unsafe_allow_html=True)
+                <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:300;color:#C8D4F0;line-height:1.6">{rec}</div></div>""", unsafe_allow_html=True)
 
     with tab3:
         opt = r.get("card_optimizer",[])
         total_s = r.get("total_potential_savings",0)
         st.markdown(f"""<div style="padding:2rem 0 2.5rem">
             <div class="iq-eyebrow" style="color:#2A3855;margin-bottom:.6rem">This month, you left unclaimed</div>
-            <div style="font-family:'Playfair Display',serif;font-size:4.5rem;font-weight:300;color:#6C8EF5;line-height:1">₹{total_s:,.0f}</div>
+            <div style="font-family:'Playfair Display',serif;font-size:4.8rem;font-weight:300;color:#6C8EF5;line-height:1">₹{total_s:,.0f}</div>
             <div class="iq-sub" style="margin-top:.6rem">Annualised — ₹{int(total_s*12):,.0f} in rewards you never received.</div></div>""", unsafe_allow_html=True)
         if opt:
             st.markdown('<div class="iq-label">By Category</div>', unsafe_allow_html=True)
@@ -744,8 +748,8 @@ elif st.session_state.flow_step == "results":
             for item in sorted(opt, key=lambda x:-x.get("potential_savings",0)):
                 if item.get("potential_savings",0) > 0:
                     st.markdown(f"""<div class="iq-row">
-                        <span class="iq-row-cat">{item['category']}<br><span style="font-size:.68rem;color:#2A3855">₹{item['spend']:,.0f} spent</span></span>
-                        <span class="iq-row-card">{item['best_card']}<br><span style="font-size:.68rem;color:#4A5A7A">{item['best_rate']}% cashback</span></span>
+                        <span class="iq-row-cat">{item['category']}<br><span style="font-size:.78rem;color:#2A3855">₹{item['spend']:,.0f} spent</span></span>
+                        <span class="iq-row-card">{item['best_card']}<br><span style="font-size:.78rem;color:#4A5A7A">{item['best_rate']}% cashback</span></span>
                         <span class="iq-row-val">₹{item['potential_savings']:,.0f}</span></div>""", unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
