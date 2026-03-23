@@ -212,6 +212,18 @@ def generate_demo_transactions() -> pd.DataFrame:
     return df
 
 
+def is_ambiguous_upi(desc: str) -> bool:
+    s = str(desc)
+    return s.upper().startswith("UPI/")
+
+
+def extract_upi_display(desc: str) -> str:
+    parts = [x for x in str(desc).split('/') if x and x.upper() != 'UPI']
+    if not parts:
+        return str(desc)
+    return parts[0] if len(parts) == 1 else f"{parts[0]} / {parts[1]}"
+
+
 def categorize(desc: str) -> str:
     text = str(desc).lower()
     for pat, cat in CATEGORY_PATTERNS:
@@ -220,9 +232,14 @@ def categorize(desc: str) -> str:
     return "Other"
 
 
-def compute_analytics(df: pd.DataFrame, selected_cards: list[str]) -> dict:
+def compute_analytics(df: pd.DataFrame, selected_cards: list[str], upi_category_map: dict | None = None) -> dict:
     work = df.copy()
     work["Category"] = work["Description"].apply(categorize)
+    if upi_category_map:
+        work["UPIKey"] = work.index.astype(str)
+        for idx, cat in upi_category_map.items():
+            if cat and cat != "— Skip —" and idx in work.index:
+                work.at[idx, "Category"] = cat
     work["Month"] = work["Date"].dt.to_period("M").astype(str)
     work["Merchant"] = work["Description"].str.replace(r"\s*Subscription|\s*Broadband|\s*Shopping|\s*Grocery|\s*Purchase", "", regex=True)
 
@@ -441,6 +458,9 @@ defaults = {
     "selected_bank": None,
     "selected_cards": [],
     "analytics": None,
+    "raw_transactions": None,
+    "upi_rows": None,
+    "upi_categories": {},
     "chat_history": [],
     "user_prefs": {},
 }
@@ -543,9 +563,61 @@ elif st.session_state.step == "cards":
             st.rerun()
     with c2:
         if st.button("Approve & connect", type="primary", use_container_width=True):
-            st.session_state.analytics = compute_analytics(generate_demo_transactions(), st.session_state.selected_cards)
+            raw_df = generate_demo_transactions()
+            upi_rows = raw_df[raw_df["Description"].apply(is_ambiguous_upi)].copy()
+            st.session_state.raw_transactions = raw_df
+            st.session_state.upi_rows = upi_rows
+            st.session_state.upi_categories = {idx: "— Skip —" for idx in upi_rows.index.tolist()}
             st.session_state.chat_history = []
             st.session_state.user_prefs = {}
+            st.session_state.step = "upi_review" if len(upi_rows) > 0 else "dashboard"
+            if len(upi_rows) == 0:
+                st.session_state.analytics = compute_analytics(raw_df, st.session_state.selected_cards)
+            st.rerun()
+
+elif st.session_state.step == "upi_review":
+    upi_rows = st.session_state.upi_rows if st.session_state.upi_rows is not None else pd.DataFrame()
+    st.markdown('<div class="section-label">Step 3 · Review uncategorized UPI spends</div>', unsafe_allow_html=True)
+    st.markdown('<div class="panel"><div class="helper">We found a few UPI payments where the merchant is unclear. Tag them once so CardIQ can classify them better.</div></div>', unsafe_allow_html=True)
+
+    if upi_rows.empty:
+        st.session_state.analytics = compute_analytics(st.session_state.raw_transactions, st.session_state.selected_cards)
+        st.session_state.step = "dashboard"
+        st.rerun()
+
+    hdr1, hdr2, hdr3 = st.columns([2.2, 1, 1.3])
+    with hdr1:
+        st.markdown('<div class="small-pill">UPI reference</div>', unsafe_allow_html=True)
+    with hdr2:
+        st.markdown('<div class="small-pill">Amount</div>', unsafe_allow_html=True)
+    with hdr3:
+        st.markdown('<div class="small-pill">Assign category</div>', unsafe_allow_html=True)
+
+    cat_options = ["— Skip —", "Groceries", "Food Delivery", "Online Shopping", "Travel", "Entertainment", "Utilities", "Fuel", "Health", "Other"]
+    for idx, row in upi_rows.iterrows():
+        c1, c2, c3 = st.columns([2.2, 1, 1.3])
+        with c1:
+            st.markdown(f'<div class="panel" style="padding:14px 18px"><div style="font-weight:700">{extract_upi_display(row["Description"])}</div><div class="helper">{pd.to_datetime(row["Date"]).date()}</div></div>', unsafe_allow_html=True)
+        with c2:
+            st.markdown(f'<div class="panel" style="padding:14px 18px; text-align:right; font-weight:800">₹{row["Amount"]:,.0f}</div>', unsafe_allow_html=True)
+        with c3:
+            selected_cat = st.selectbox(
+                f"UPI category {idx}",
+                cat_options,
+                index=cat_options.index(st.session_state.upi_categories.get(idx, "— Skip —")) if st.session_state.upi_categories.get(idx, "— Skip —") in cat_options else 0,
+                key=f"upi_cat_{idx}",
+                label_visibility="collapsed",
+            )
+            st.session_state.upi_categories[idx] = selected_cat
+
+    b1, b2 = st.columns(2)
+    with b1:
+        if st.button("← Back", use_container_width=True):
+            st.session_state.step = "cards"
+            st.rerun()
+    with b2:
+        if st.button("Continue to analysis", type="primary", use_container_width=True):
+            st.session_state.analytics = compute_analytics(st.session_state.raw_transactions, st.session_state.selected_cards, st.session_state.upi_categories)
             st.session_state.step = "dashboard"
             st.rerun()
 
@@ -557,7 +629,7 @@ elif st.session_state.step == "dashboard":
   <div class="cta-line">
     <div>
       <div class="section-label" style="margin:0 0 8px 0">Connected</div>
-      <div style="font-size:2rem; font-weight:800">{st.session_state.selected_bank} · Last 6 months</div>
+      <div style="font-size:2rem; font-weight:800">{st.session_state.selected_bank} · Last 6 months</div><div class="helper" style="margin-top:6px">{sum(1 for v in st.session_state.upi_categories.values() if v != "— Skip —")} UPI payments tagged for sharper categorization</div>
     </div>
     <div>{''.join([f'<span class="chip">{c}</span>' for c in st.session_state.selected_cards])}</div>
   </div>
@@ -588,15 +660,19 @@ elif st.session_state.step == "dashboard":
     st.markdown('<div class="section-label">Ask CardIQ copilot</div>', unsafe_allow_html=True)
     st.markdown('<div class="chat-box">', unsafe_allow_html=True)
     st.markdown('<div class="big-note">Try questions like: <strong>What changed this month?</strong> · <strong>Break down online shopping for me.</strong> · <strong>Do I have a bundle opportunity?</strong> · <strong>Which 2 cards should I keep?</strong></div>', unsafe_allow_html=True)
-    question = st.text_input("Ask CardIQ", placeholder="Ask about spending patterns, recurring bills, subscriptions, cards, or savings...", label_visibility="collapsed")
-    if st.button("Ask", type="primary") and question:
-        answer, ok = ask_copilot(question, analytics)
-        st.session_state.chat_history.append({"q": question, "a": answer})
-        st.rerun()
 
-    for item in reversed(st.session_state.chat_history[-6:]):
+    for item in st.session_state.chat_history[-6:]:
         st.markdown(f'<div class="chat-user">{item["q"]}</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="chat-ai">{item["a"]}</div>', unsafe_allow_html=True)
+
+    with st.form(key="copilot_form", clear_on_submit=True):
+        question = st.text_input("Ask CardIQ", placeholder="Ask about spending patterns, recurring bills, subscriptions, cards, or savings...", label_visibility="collapsed")
+        submitted = st.form_submit_button("Ask →", type="primary", use_container_width=True)
+
+    if submitted and question.strip():
+        answer, ok = ask_copilot(question.strip(), analytics)
+        st.session_state.chat_history.append({"q": question.strip(), "a": answer})
+        st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
 
     r1, r2 = st.columns(2)
@@ -606,6 +682,9 @@ elif st.session_state.step == "dashboard":
             st.session_state.selected_bank = None
             st.session_state.selected_cards = []
             st.session_state.analytics = None
+            st.session_state.raw_transactions = None
+            st.session_state.upi_rows = None
+            st.session_state.upi_categories = {}
             st.session_state.chat_history = []
             st.rerun()
     with r2:
