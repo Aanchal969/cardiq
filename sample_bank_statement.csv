@@ -1,0 +1,44 @@
+Date,Description,Amount,Type
+2024-03-01,Opening Balance,,CREDIT
+2024-03-01,Swiggy Order #SW8821,-450,DEBIT
+2024-03-02,Amazon Purchase,-2399,DEBIT
+2024-03-02,Salary Credit,85000,CREDIT
+2024-03-03,Zomato Order #ZM4421,-380,DEBIT
+2024-03-04,Uber Ride,-220,DEBIT
+2024-03-04,Netflix Subscription,-649,DEBIT
+2024-03-05,Big Bazaar Groceries,-3200,DEBIT
+2024-03-06,Swiggy Order #SW9012,-520,DEBIT
+2024-03-07,HDFC Credit Card Bill Payment,-12000,DEBIT
+2024-03-08,Zomato Order #ZM5530,-670,DEBIT
+2024-03-09,Ola Ride,-180,DEBIT
+2024-03-09,Spotify Premium,-119,DEBIT
+2024-03-10,Flipkart Purchase,-1899,DEBIT
+2024-03-11,Apollo Pharmacy,-890,DEBIT
+2024-03-11,Swiggy Order #SW9234,-410,DEBIT
+2024-03-12,DMart Groceries,-2750,DEBIT
+2024-03-13,Amazon Prime Subscription,-1499,DEBIT
+2024-03-13,Uber Ride,-310,DEBIT
+2024-03-14,Zomato Order #ZM6621,-590,DEBIT
+2024-03-15,Reliance Digital,-4500,DEBIT
+2024-03-15,Freelance Payment Received,15000,CREDIT
+2024-03-16,Swiggy Order #SW9871,-480,DEBIT
+2024-03-17,BookMyShow Movies,-840,DEBIT
+2024-03-18,Uber Ride,-260,DEBIT
+2024-03-18,Myntra Purchase,-2199,DEBIT
+2024-03-19,Swiggy Order #SW0012,-550,DEBIT
+2024-03-20,Big Bazaar Groceries,-2900,DEBIT
+2024-03-21,Zomato Order #ZM7732,-440,DEBIT
+2024-03-21,YouTube Premium,-189,DEBIT
+2024-03-22,Petrol Pump HPCL,-3500,DEBIT
+2024-03-22,Swiggy Order #SW0234,-490,DEBIT
+2024-03-23,Amazon Purchase,-3299,DEBIT
+2024-03-24,Ola Ride,-200,DEBIT
+2024-03-24,Cult.fit Membership,-999,DEBIT
+2024-03-25,Zomato Order #ZM8843,-610,DEBIT
+2024-03-26,Swiggy Order #SW0456,-430,DEBIT
+2024-03-27,MakeMyTrip Hotel Booking,-8500,DEBIT
+2024-03-28,Uber Ride,-290,DEBIT
+2024-03-28,Blinkit Groceries,-1850,DEBIT
+2024-03-29,Swiggy Order #SW0678,-470,DEBIT
+2024-03-30,Electricity Bill BESCOM,-2200,DEBIT
+2024-03-31,Jio Recharge,-299,DEBIT
