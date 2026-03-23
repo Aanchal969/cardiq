@@ -145,7 +145,7 @@ section[data-testid="stSidebar"]{display:none}
 .iq-eyebrow{font-size:.7rem;font-weight:500;letter-spacing:.3em;text-transform:uppercase;color:var(--muted)}
 .iq-hero{font-family:'Playfair Display',serif;font-size:clamp(3.2rem,6vw,5rem);font-weight:400;line-height:1;color:var(--text);letter-spacing:-.01em}
 .iq-hero em{font-style:italic;color:var(--accent)}
-.iq-sub{font-size:1rem;font-weight:400;color:#9FB0D3;line-height:1.8}
+.iq-sub{font-size:1rem;font-weight:300;color:var(--muted);line-height:1.8}
 .iq-label{font-size:.68rem;font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:var(--muted2);margin-bottom:1.25rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)}
 
 /* ── Layout ── */
@@ -168,8 +168,7 @@ section[data-testid="stSidebar"]{display:none}
 .bank-tile:hover{border-color:var(--border2);background:var(--bg3)}
 .bank-tile.selected{border-color:var(--accent);background:var(--bg3);box-shadow:0 0 0 1px var(--accent) inset}
 .bank-logo{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem;letter-spacing:.05em}
-.bank-logo-text{font-size:.78rem;font-weight:700;letter-spacing:.08em;color:#E2E8F4;line-height:1;text-align:center}
-.bank-name-text{font-size:.82rem;font-weight:500;color:#C7D3EE;letter-spacing:.04em}
+.bank-name-text{font-size:.78rem;font-weight:400;color:var(--muted);letter-spacing:.05em}
 .bank-selected-badge{font-size:.55rem;letter-spacing:.15em;color:var(--accent);font-weight:600;text-transform:uppercase}
 
 /* ── Consent ── */
@@ -245,13 +244,6 @@ div[data-testid="stFileUploader"]{background:var(--bg2)!important;border:1px sol
 # ══════════════════════════════════════════════════════════════
 # HELPERS
 # ══════════════════════════════════════════════════════════════
-def get_default_api_key():
-    try:
-        secret_key = st.secrets.get("OPENAI_API_KEY", "")
-    except Exception:
-        secret_key = ""
-    return secret_key or os.getenv("OPENAI_API_KEY", "")
-
 def parse_csv_string(csv_string):
     df = pd.read_csv(StringIO(csv_string))
     df.columns = [c.strip() for c in df.columns]
@@ -290,6 +282,117 @@ def extract_upi_display(description):
     segments = [s for s in desc.split("/") if s and s.upper() not in ["UPI","IMPS","NEFT"]]
     return segments[-1] if segments else desc
 
+
+def mask_api_key(key):
+    if not key:
+        return ""
+    return f"{key[:7]}...{key[-4:]}" if len(key) > 12 else "Configured"
+
+
+def load_api_key():
+    try:
+        secret_key = st.secrets.get("OPENAI_API_KEY", "")
+    except Exception:
+        secret_key = ""
+    return secret_key or os.getenv("OPENAI_API_KEY", "")
+
+
+def format_profile(profile):
+    if not profile:
+        return "No user preferences collected yet."
+    return json.dumps(profile, ensure_ascii=False)
+
+
+def build_data_context(result, all_debits, owned_cards, user_profile):
+    tx_sample = all_debits[["Date", "Description", "Amount", "Category"]].fillna("").to_dict("records") if all_debits is not None else []
+    trimmed_sample = tx_sample[:80]
+    card_rules = {card: CARD_BENEFITS[card] for card in owned_cards} if owned_cards else {}
+    payload = {
+        "analysis": result,
+        "owned_cards": owned_cards,
+        "card_rules": card_rules,
+        "user_profile": user_profile,
+        "transactions_sample": trimmed_sample,
+    }
+    return json.dumps(payload, ensure_ascii=False)
+
+
+def needs_clarification(question, user_profile):
+    q = question.lower().strip()
+    high_value = ["cancel", "keep", "review", "which two", "which 2", "keep only", "cut back", "reduce", "save ", "save money", "stop spending", "should i keep", "should i cancel"]
+    if not any(k in q for k in high_value):
+        return None
+
+    if any(k in q for k in ["subscription", "subscriptions", "netflix", "spotify", "prime", "youtube premium", "cult.fit"]):
+        if not user_profile.get("subscription_preference"):
+            return {
+                "intent": "subscription_advice",
+                "question": question,
+                "ask": "Before I answer that, what matters more here: saving the most money, keeping entertainment, keeping fitness, or keeping convenience?"
+            }
+
+    if "card" in q:
+        if not user_profile.get("card_preference"):
+            return {
+                "intent": "card_portfolio",
+                "question": question,
+                "ask": "Before I answer that, what matters more for your cards: max rewards, fewer cards to manage, travel benefits, or simple cashback?"
+            }
+
+    if any(k in q for k in ["cut back", "reduce", "save money", "stop spending"]):
+        if not user_profile.get("spend_goal"):
+            return {
+                "intent": "spend_reduction",
+                "question": question,
+                "ask": "I can tailor that better if you tell me your priority: save aggressively, reduce waste without hurting lifestyle, or protect essentials first?"
+            }
+    return None
+
+
+def update_profile_from_reply(client, pending, reply, user_profile):
+    existing = json.dumps(user_profile or {}, ensure_ascii=False)
+    prompt = f"""You are extracting stable user preferences for a finance copilot.
+Given the original question, the follow-up question, and the user's reply, update the profile.
+Return ONLY valid JSON with this exact structure:
+{{
+  "subscription_preference": "<string>",
+  "card_preference": "<string>",
+  "spend_goal": "<string>",
+  "notes": ["<string>"]
+}}
+Rules:
+- Preserve prior info when relevant.
+- Use short phrases.
+- If something is unknown, return an empty string or empty list.
+
+CURRENT PROFILE:
+{existing}
+
+ORIGINAL QUESTION:
+{pending.get('question','')}
+
+FOLLOW-UP ASKED:
+{pending.get('ask','')}
+
+USER REPLY:
+{reply}
+"""
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[{"role":"user","content":prompt}],
+        temperature=0.2,
+        max_tokens=250,
+    )
+    raw = re.sub(r"```json\s*|\s*```", "", response.choices[0].message.content.strip()).strip()
+    parsed = json.loads(raw)
+    merged = {
+        "subscription_preference": parsed.get("subscription_preference") or user_profile.get("subscription_preference", ""),
+        "card_preference": parsed.get("card_preference") or user_profile.get("card_preference", ""),
+        "spend_goal": parsed.get("spend_goal") or user_profile.get("spend_goal", ""),
+        "notes": list(dict.fromkeys((user_profile.get("notes", []) or []) + (parsed.get("notes", []) or [])))
+    }
+    return merged
+
 def analyze_with_ai(client, tx_text, owned_cards):
     card_text = "\n".join([f"- {c}: {CARD_BENEFITS[c]['note']}" for c in owned_cards])
     prompt = f"""You are a sharp financial analyst. Analyze these transactions and return ONLY valid JSON — no markdown.
@@ -309,9 +412,14 @@ Return exactly this structure:
   "insights": ["<string>","<string>","<string>"],
   "card_optimizer": [{{"category":"<string>","spend":<n>,"best_card":"<string>","best_rate":<n>,"potential_savings":<n>}}],
   "total_potential_savings": <number>,
-  "top_recommendation": "<string>"
+  "top_recommendation": "<string>",
+  "subscription_actions": [{{"name":"<string>","amount":<n>,"action":"keep|review|cancel","reason":"<string>"}}],
+  "card_portfolio_advice": [{{"card":"<string>","action":"keep|review|cancel","reason":"<string>","estimated_value":<n>}}]
 }}
-Rules: categorize every transaction, optimizer only for spend > 500, insights must cite actual numbers, all amounts in INR. Note: UPI transactions in the data already have a Category column — treat those as ground truth and don't re-categorize them."""
+Rules: categorize every transaction, optimizer only for spend > 500, insights must cite actual numbers, all amounts in INR.
+For subscription_actions, use reasonable consumer-finance judgment based on spend and overlap.
+For card_portfolio_advice, use the user's owned cards, category fit, and reward overlap. If fee data is unknown, base advice on usage value and overlap only.
+Note: UPI transactions in the data already have a Category column — treat those as ground truth and don't re-categorize them."""
     response = client.chat.completions.create(
         model="gpt-4o",
         messages=[{"role":"user","content":prompt}],
@@ -320,12 +428,23 @@ Rules: categorize every transaction, optimizer only for spend > 500, insights mu
     raw = re.sub(r"```json\s*|\s*```", "", response.choices[0].message.content.strip()).strip()
     return json.loads(raw)
 
-def chat_with_data(client, question, context):
-    prompt = f"""You are CardIQ — precise, direct, and specific.
-Answer in 2-4 short sentences using only the data provided.
-If subscriptions are present, name them explicitly with amounts.
-If the data does not contain the answer, say that clearly and do not guess.
-When helpful, prioritise the biggest categories, largest amounts, and the clearest action the user can take.
+def chat_with_data(client, question, context, user_profile=None):
+    prompt = f"""You are CardIQ, an AI financial copilot.
+Your job is to create value beyond the dashboard.
+Answer using the provided data plus user preferences.
+
+Rules:
+- Be specific and decision-oriented.
+- When useful, synthesize across spend, subscriptions, and card usage.
+- Give 3-5 short bullet points when the question is advisory.
+- Name exact subscriptions/cards/categories with amounts whenever available.
+- If the answer depends on user preference and a preference is provided, use it.
+- Do not say 'the data does not provide' unless the answer is truly impossible.
+- If annual fee or card-level usage is unknown, say the advice is usage-based.
+- End with one clear recommended next step when appropriate.
+
+USER PROFILE:
+{format_profile(user_profile or {})}
 
 DATA:
 {context}
@@ -336,7 +455,8 @@ QUESTION:
     response = client.chat.completions.create(
         model="gpt-4o",
         messages=[{"role":"user","content":prompt}],
-        temperature=0.2, max_tokens=300,
+        temperature=0.4,
+        max_tokens=450,
     )
     return response.choices[0].message.content.strip()
 
@@ -371,11 +491,17 @@ defaults = {
     "analysis": None,
     "context": "",
     "chat_history": [],
-    "api_key": get_default_api_key(),
+    "api_key": "",
+    "user_profile": {},
+    "pending_clarification": None,
+    "data_context": "",
 }
 for k, v in defaults.items():
     if k not in st.session_state:
         st.session_state[k] = v
+
+if not st.session_state.api_key:
+    st.session_state.api_key = load_api_key()
 
 # ══════════════════════════════════════════════════════════════
 # HERO
@@ -392,21 +518,16 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-default_api_key = get_default_api_key()
-if default_api_key:
-    st.session_state.api_key = default_api_key
-    st.markdown("""
-    <div style="padding:.9rem 5rem;background:#0D1220;border-bottom:1px solid #1E2A3F;display:flex;justify-content:space-between;align-items:center">
-        <div class="iq-eyebrow">OpenAI Connected</div>
-        <div class="iq-sub" style="font-size:.7rem">API key loaded securely from secrets / environment</div>
-    </div>
-    """, unsafe_allow_html=True)
-else:
-    with st.expander("✦  CONNECT  —  Enter OpenAI API Key"):
-        st.markdown('<div class="iq-sub" style="font-size:.8rem;margin-bottom:.75rem">For a no-paste demo, add <span style="color:#6C8EF5">OPENAI_API_KEY</span> in Streamlit secrets or your environment variables.</div>', unsafe_allow_html=True)
-        api_input = st.text_input("", type="password", placeholder="sk-...", value=st.session_state.api_key, label_visibility="collapsed")
-        if api_input:
-            st.session_state.api_key = api_input
+with st.expander("✦  CONNECT  —  OpenAI API Key", expanded=False):
+    auto_key = load_api_key()
+    if auto_key and not st.session_state.api_key:
+        st.session_state.api_key = auto_key
+    status = f"Configured automatically ({mask_api_key(st.session_state.api_key)})" if st.session_state.api_key else "Not configured yet"
+    st.markdown(f'<div class="iq-sub" style="margin-bottom:1rem">Status: <span style="color:#6C8EF5">{status}</span></div>', unsafe_allow_html=True)
+    api_input = st.text_input("", type="password", placeholder="Paste only if you want to override the stored key", value="", label_visibility="collapsed")
+    if api_input:
+        st.session_state.api_key = api_input.strip()
+        st.success("API key stored for this session.")
 st.markdown('<div class="iq-divider"></div>', unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════
@@ -452,8 +573,12 @@ elif st.session_state.flow_step == "bank_select":
             sel_class = "selected" if is_sel else ""
             st.markdown(f"""
             <div class="bank-tile {sel_class}">
-                <div class="bank-logo-wrap" style="background:{bank['bg']};border:1px solid {bank['color']}55;border-radius:12px;width:56px;height:56px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(0,0,0,.22)">
-                    <div class="bank-logo-text" style="color:{bank['color']};font-size:.7rem;">{bank['abbr']}</div>
+                <div class="bank-logo-wrap" style="background:{bank['bg']};border:1px solid {bank['color']}44;border-radius:12px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;overflow:hidden">
+                    <img src="{bank['logo']}" 
+                         style="width:36px;height:36px;object-fit:contain;border-radius:6px"
+                         onerror="this.style.display='none';this.nextSibling.style.display='flex'"
+                         alt="{bank['name']}">
+                    <div style="display:none;width:36px;height:36px;align-items:center;justify-content:center;font-weight:700;font-size:.62rem;color:{bank['color']};letter-spacing:.05em">{bank['abbr']}</div>
                 </div>
                 <div class="bank-name-text">{bank['name']}</div>
                 {sel_badge}
@@ -488,7 +613,7 @@ elif st.session_state.flow_step == "card_select":
         with (c1 if i % 2 == 0 else c2):
             if st.checkbox(card, key=f"card_{card}", value=(card in st.session_state.owned_cards)):
                 owned.append(card)
-                st.markdown(f'<div class="iq-sub" style="font-size:.68rem;margin:-.4rem 0 .6rem 1.8rem;color:#AEBCE0">{CARD_BENEFITS[card]["note"]}</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="iq-sub" style="font-size:.68rem;margin:-.4rem 0 .6rem 1.8rem;color:#93A4C3">{CARD_BENEFITS[card]["note"]}</div>', unsafe_allow_html=True)
     st.session_state.owned_cards = owned
 
     st.markdown('<div style="height:2rem"></div>', unsafe_allow_html=True)
@@ -515,7 +640,7 @@ elif st.session_state.flow_step == "consent":
             <div class="consent-row"><span class="consent-icon">✦</span><div class="consent-txt"><strong>No credentials shared</strong> — CardIQ never sees your PIN, password, or OTP.</div></div>
             <div class="consent-row" style="border:none"><span class="consent-icon">✦</span><div class="consent-txt"><strong>One-time consent</strong> — Access expires after this session. Revoke anytime from your bank app.</div></div>
             <div style="margin-top:1.5rem;padding:1rem;background:#080C14;border:1px solid #1E2A3F">
-                <div class="iq-sub" style="font-size:.78rem;color:#7F93BF">This consent is governed by the RBI Account Aggregator framework under NBFC-AA regulations. CardIQ is a registered Financial Information User (FIU).</div>
+                <div class="iq-sub" style="font-size:.78rem;color:#2A3855">This consent is governed by the RBI Account Aggregator framework under NBFC-AA regulations. CardIQ is a registered Financial Information User (FIU).</div>
             </div></div>""", unsafe_allow_html=True)
         st.markdown('<div style="height:1.5rem"></div>', unsafe_allow_html=True)
         cb1, cb2 = st.columns(2)
@@ -600,9 +725,9 @@ elif st.session_state.flow_step == "upi_review":
 
     # Column headers
     st.markdown("""<div class="upi-row" style="border-bottom:1px solid #1A1410">
-        <span style="font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:#7F93BF">UPI ID &nbsp;·&nbsp; Date</span>
-        <span style="font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:#7F93BF;text-align:right">Amount</span>
-        <span style="font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:#7F93BF">Category</span>
+        <span style="font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:#2A3855">UPI ID &nbsp;·&nbsp; Date</span>
+        <span style="font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:#2A3855;text-align:right">Amount</span>
+        <span style="font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:#2A3855">Category</span>
     </div>""", unsafe_allow_html=True)
 
     # One row per UPI transaction
@@ -685,15 +810,9 @@ elif st.session_state.flow_step == "analysing":
 
             st.session_state.analysis     = result
             st.session_state.chat_history = []
-            subs = result.get("subscriptions", [])
-            st.session_state.context      = (
-                f"Spend: ₹{result.get('total_spend',0):,.0f}. "
-                f"Categories: {result.get('categories',{})}. "
-                f"Subscriptions: {subs}. "
-                f"Insights: {result.get('insights',[])}. "
-                f"Optimizer: {result.get('card_optimizer',[])}. "
-                f"Savings: ₹{result.get('total_potential_savings',0):,.0f}."
-            )
+            st.session_state.pending_clarification = None
+            st.session_state.data_context = build_data_context(result, all_debits, cards_to_use, st.session_state.user_profile)
+            st.session_state.context      = st.session_state.data_context
             st.session_state.flow_step    = "results"
             st.rerun()
         except Exception as e:
@@ -714,7 +833,7 @@ elif st.session_state.flow_step == "results":
         <div style="display:flex;gap:1.5rem;align-items:center">
             {"".join([f'<span class="account-badge">{c}</span>' for c in (st.session_state.owned_cards or ["No cards"])])}
         </div>
-        <div class="iq-eyebrow" style="color:#7F93BF">{tagged_count} UPI payments tagged &nbsp;·&nbsp; March 2024</div>
+        <div class="iq-eyebrow" style="color:#2A3855">{tagged_count} UPI payments tagged &nbsp;·&nbsp; March 2024</div>
     </div>""", unsafe_allow_html=True)
 
     st.markdown('<div class="iq-body">', unsafe_allow_html=True)
@@ -748,12 +867,23 @@ elif st.session_state.flow_step == "results":
                 pct = int(amt/total*100)
                 st.markdown(f"""<div class="iq-row">
                     <span class="iq-row-cat">{cat}</span>
-                    <span style="font-family:'Playfair Display',serif;font-size:1.2rem;color:#7F93BF">{pct}%</span>
+                    <span style="font-family:'Playfair Display',serif;font-size:1.2rem;color:#2A3855">{pct}%</span>
                     <span class="iq-row-val">₹{amt:,.0f}</span></div>""", unsafe_allow_html=True)
         if subs:
             st.markdown('<div style="height:2rem"></div>', unsafe_allow_html=True)
             st.markdown('<div class="iq-label">Recurring Charges</div>', unsafe_allow_html=True)
             st.markdown("".join([f'<div class="iq-sub-tag">{s.get("name","?")} <span>₹{s.get("amount",0):,.0f}/mo</span></div>' for s in subs]), unsafe_allow_html=True)
+
+        sub_actions = r.get("subscription_actions", [])
+        if sub_actions:
+            st.markdown('<div style="height:2rem"></div>', unsafe_allow_html=True)
+            st.markdown('<div class="iq-label">Subscription Advice</div>', unsafe_allow_html=True)
+            for item in sub_actions:
+                action_color = {"keep":"#34D399","review":"#FBBF24","cancel":"#F87171"}.get(item.get("action","review"), "#6C8EF5")
+                st.markdown(f"""<div class="iq-row">
+                    <span class="iq-row-cat">{item.get('name','—')}<br><span style="font-size:.78rem;color:#93A4C3">{item.get('reason','')}</span></span>
+                    <span class="iq-row-card" style="color:{action_color}">{str(item.get('action','review')).upper()}</span>
+                    <span class="iq-row-val">₹{item.get('amount',0):,.0f}</span></div>""", unsafe_allow_html=True)
 
     with tab2:
         st.markdown('<div class="iq-label">Observations</div>', unsafe_allow_html=True)
@@ -769,19 +899,29 @@ elif st.session_state.flow_step == "results":
         opt = r.get("card_optimizer",[])
         total_s = r.get("total_potential_savings",0)
         st.markdown(f"""<div style="padding:2rem 0 2.5rem">
-            <div class="iq-eyebrow" style="color:#7F93BF;margin-bottom:.6rem">This month, you left unclaimed</div>
+            <div class="iq-eyebrow" style="color:#2A3855;margin-bottom:.6rem">This month, you left unclaimed</div>
             <div style="font-family:'Playfair Display',serif;font-size:4.8rem;font-weight:300;color:#6C8EF5;line-height:1">₹{total_s:,.0f}</div>
             <div class="iq-sub" style="margin-top:.6rem">Annualised — ₹{int(total_s*12):,.0f} in rewards you never received.</div></div>""", unsafe_allow_html=True)
+        portfolio = r.get("card_portfolio_advice", [])
+        if portfolio:
+            st.markdown('<div class="iq-label">Portfolio Advice</div>', unsafe_allow_html=True)
+            for item in portfolio:
+                action_color = {"keep":"#34D399","review":"#FBBF24","cancel":"#F87171"}.get(item.get("action","review"), "#6C8EF5")
+                st.markdown(f"""<div class="iq-row">
+                    <span class="iq-row-cat">{item.get('card','—')}<br><span style="font-size:.78rem;color:#93A4C3">{item.get('reason','')}</span></span>
+                    <span class="iq-row-card" style="color:{action_color}">{str(item.get('action','review')).upper()}</span>
+                    <span class="iq-row-val">₹{item.get('estimated_value',0):,.0f}</span></div>""", unsafe_allow_html=True)
+            st.markdown('<div style="height:1.5rem"></div>', unsafe_allow_html=True)
         if opt:
             st.markdown('<div class="iq-label">By Category</div>', unsafe_allow_html=True)
             st.markdown("""<div class="iq-row">
-                <span class="iq-row-cat" style="color:#7F93BF;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase">Category</span>
-                <span class="iq-row-card" style="color:#7F93BF;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase">Optimal Card</span>
-                <span class="iq-row-val" style="color:#7F93BF;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase">You Save</span></div>""", unsafe_allow_html=True)
+                <span class="iq-row-cat" style="color:#2A3855;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase">Category</span>
+                <span class="iq-row-card" style="color:#2A3855;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase">Optimal Card</span>
+                <span class="iq-row-val" style="color:#2A3855;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase">You Save</span></div>""", unsafe_allow_html=True)
             for item in sorted(opt, key=lambda x:-x.get("potential_savings",0)):
                 if item.get("potential_savings",0) > 0:
                     st.markdown(f"""<div class="iq-row">
-                        <span class="iq-row-cat">{item['category']}<br><span style="font-size:.78rem;color:#7F93BF">₹{item['spend']:,.0f} spent</span></span>
+                        <span class="iq-row-cat">{item['category']}<br><span style="font-size:.78rem;color:#2A3855">₹{item['spend']:,.0f} spent</span></span>
                         <span class="iq-row-card">{item['best_card']}<br><span style="font-size:.78rem;color:#4A5A7A">{item['best_rate']}% cashback</span></span>
                         <span class="iq-row-val">₹{item['potential_savings']:,.0f}</span></div>""", unsafe_allow_html=True)
 
@@ -793,6 +933,19 @@ elif st.session_state.flow_step == "results":
     st.markdown('<div class="iq-label">Ask CardIQ</div>', unsafe_allow_html=True)
     st.markdown('<div class="iq-sub" style="margin-bottom:2rem">Your data. Your questions. Ask anything.</div>', unsafe_allow_html=True)
 
+    profile = st.session_state.user_profile or {}
+    if profile:
+        chips = []
+        if profile.get("subscription_preference"):
+            chips.append(f'Preference: {profile["subscription_preference"]}')
+        if profile.get("card_preference"):
+            chips.append(f'Cards: {profile["card_preference"]}')
+        if profile.get("spend_goal"):
+            chips.append(f'Goal: {profile["spend_goal"]}')
+        if chips:
+            st.markdown("".join([f'<div class="iq-sub-tag">{c}</div>' for c in chips]), unsafe_allow_html=True)
+            st.markdown('<div style="height:1rem"></div>', unsafe_allow_html=True)
+
     for msg in st.session_state.chat_history:
         if msg["role"] == "user":
             st.markdown(f'<div class="iq-chat-user">&ldquo;{msg["content"]}&rdquo;</div>', unsafe_allow_html=True)
@@ -800,15 +953,31 @@ elif st.session_state.flow_step == "results":
             st.markdown(f'<div class="iq-chat-ai">{msg["content"]}</div>', unsafe_allow_html=True)
 
     with st.form(key="chat_form", clear_on_submit=True):
-        user_q = st.text_input("", placeholder="e.g.  Which card should I cancel?   ·   Where did I overspend?", label_visibility="collapsed")
+        user_q = st.text_input("", placeholder="e.g.  Which subscriptions should I cancel? · I only want to keep 2 cards · How can I save without hurting lifestyle?", label_visibility="collapsed")
         submitted = st.form_submit_button("ASK →")
 
     if submitted and user_q.strip():
         with st.spinner(""):
             try:
                 client = OpenAI(api_key=st.session_state.api_key)
-                answer = chat_with_data(client, user_q.strip(), st.session_state.context)
-                st.session_state.chat_history.append({"role":"user","content":user_q.strip()})
+                message = user_q.strip()
+                st.session_state.chat_history.append({"role":"user","content":message})
+
+                if st.session_state.pending_clarification:
+                    st.session_state.user_profile = update_profile_from_reply(client, st.session_state.pending_clarification, message, st.session_state.user_profile)
+                    original_question = st.session_state.pending_clarification.get("question", "")
+                    st.session_state.data_context = build_data_context(st.session_state.analysis, st.session_state.all_debits, st.session_state.owned_cards or list(CARD_BENEFITS.keys())[:3], st.session_state.user_profile)
+                    answer = chat_with_data(client, original_question, st.session_state.data_context, st.session_state.user_profile)
+                    st.session_state.pending_clarification = None
+                else:
+                    clarification = needs_clarification(message, st.session_state.user_profile)
+                    if clarification:
+                        answer = clarification["ask"]
+                        st.session_state.pending_clarification = clarification
+                    else:
+                        st.session_state.data_context = build_data_context(st.session_state.analysis, st.session_state.all_debits, st.session_state.owned_cards or list(CARD_BENEFITS.keys())[:3], st.session_state.user_profile)
+                        answer = chat_with_data(client, message, st.session_state.data_context, st.session_state.user_profile)
+
                 st.session_state.chat_history.append({"role":"assistant","content":answer})
                 st.rerun()
             except Exception as e:
