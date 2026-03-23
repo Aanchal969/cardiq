@@ -604,13 +604,16 @@ if st.session_state.analysis:
         else:
             st.markdown(f'<div class="chat-msg-ai">🤖 {msg["content"]}</div>', unsafe_allow_html=True)
 
-    user_q = st.text_input("Your question", placeholder="e.g. Am I spending too much on food?", label_visibility="collapsed")
-    if user_q:
+    with st.form(key="chat_form", clear_on_submit=True):
+        user_q = st.text_input("Your question", placeholder="e.g. Am I spending too much on food?", label_visibility="collapsed")
+        submitted = st.form_submit_button("Ask →")
+
+    if submitted and user_q.strip():
         with st.spinner("Thinking..."):
             try:
                 client = OpenAI(api_key=st.session_state.api_key)
-                answer = chat_with_data(client, user_q, st.session_state.context)
-                st.session_state.chat_history.append({"role": "user", "content": user_q})
+                answer = chat_with_data(client, user_q.strip(), st.session_state.context)
+                st.session_state.chat_history.append({"role": "user", "content": user_q.strip()})
                 st.session_state.chat_history.append({"role": "assistant", "content": answer})
                 st.rerun()
             except Exception as e:
