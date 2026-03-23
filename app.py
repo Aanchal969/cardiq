@@ -45,61 +45,124 @@ CARD_BENEFITS = {
 
 
 def build_demo_csvs():
+    """
+    High-earning urban professional. ₹1.8L salary.
+    Target: ~₹1.2–1.4L/month combined spend.
+    Missed rewards annualised: ~₹55,000–70,000.
+    """
     bank_rows, cc_rows = [], []
     months = pd.date_range("2024-09-01", periods=6, freq="MS")
+
     for m_idx, month_start in enumerate(months):
         y, m = month_start.year, month_start.month
         def d(day):
             return pd.Timestamp(year=y, month=m, day=day).strftime("%Y-%m-%d")
 
-        # Bank transactions
+        # ── BANK TRANSACTIONS ──────────────────────────────────────
         bank_rows += [
-            {"Date": d(2), "Description": "Salary Credit", "Amount": 92000, "Type": "CREDIT"},
-            {"Date": d(3), "Description": "Airtel Postpaid Bill", "Amount": -(799 + (m_idx % 2) * 100), "Type": "DEBIT"},
-            {"Date": d(4), "Description": "Airtel Xstream Fiber", "Amount": -999, "Type": "DEBIT"},
-            {"Date": d(5), "Description": "Netflix Subscription", "Amount": -649, "Type": "DEBIT"},
-            {"Date": d(6), "Description": "Spotify Premium", "Amount": -119, "Type": "DEBIT"},
-            {"Date": d(7), "Description": "Amazon Prime Subscription", "Amount": -1499, "Type": "DEBIT"},
-            {"Date": d(8), "Description": "YouTube Premium", "Amount": -189, "Type": "DEBIT"},
-            {"Date": d(9), "Description": "Tata Play DTH Pack", "Amount": -399, "Type": "DEBIT"},
-            {"Date": d(10), "Description": "Swiggy Order #SW8821", "Amount": -(420 + m_idx * 15), "Type": "DEBIT"},
-            {"Date": d(11), "Description": "Zomato Order #ZM4421", "Amount": -(360 + m_idx * 10), "Type": "DEBIT"},
-            {"Date": d(12), "Description": "Big Bazaar Groceries", "Amount": -(3100 + m_idx * 130), "Type": "DEBIT"},
-            {"Date": d(13), "Description": "DMart Groceries", "Amount": -(2700 + m_idx * 120), "Type": "DEBIT"},
-            {"Date": d(14), "Description": "UPI/9876543210@ybl", "Amount": -(220 + m_idx * 25), "Type": "DEBIT"},
-            {"Date": d(15), "Description": "UPI/PAYTM/QRCODE/7654321", "Amount": -(180 + m_idx * 20), "Type": "DEBIT"},
-            {"Date": d(16), "Description": "Electricity Bill BESCOM", "Amount": -(2100 + m_idx * 60), "Type": "DEBIT"},
-            {"Date": d(17), "Description": "Apollo Pharmacy", "Amount": -(890 + m_idx * 30), "Type": "DEBIT"},
-            {"Date": d(18), "Description": "Cult.fit Membership", "Amount": -999, "Type": "DEBIT"},
-            {"Date": d(19), "Description": "UPI/PHONEPE/TXN/5432109", "Amount": -(260 + m_idx * 18), "Type": "DEBIT"},
-            {"Date": d(20), "Description": "MakeMyTrip Hotel Booking", "Amount": -(7000 + m_idx * 250), "Type": "DEBIT"},
-            {"Date": d(22), "Description": "BookMyShow Movies", "Amount": -(840 + m_idx * 20), "Type": "DEBIT"},
-            {"Date": d(24), "Description": "Blinkit Groceries", "Amount": -(1650 + m_idx * 70), "Type": "DEBIT"},
-            {"Date": d(26), "Description": "Petrol Pump HPCL", "Amount": -(3200 + m_idx * 90), "Type": "DEBIT"},
-            {"Date": d(28), "Description": "Freelance Payment Received", "Amount": 12000 if m_idx % 2 == 0 else 0, "Type": "CREDIT"},
+            # Income
+            {"Date": d(1),  "Description": "Salary Credit",               "Amount": 180000,                           "Type": "CREDIT"},
+            {"Date": d(15), "Description": "Freelance Consulting Fee",     "Amount": 25000 if m_idx % 2 == 0 else 0,   "Type": "CREDIT"},
+
+            # Subscriptions (rich stack — clearly bloated, great for insights)
+            {"Date": d(2),  "Description": "Netflix Premium Subscription", "Amount": -799,                             "Type": "DEBIT"},
+            {"Date": d(2),  "Description": "Amazon Prime Subscription",    "Amount": -1499,                            "Type": "DEBIT"},
+            {"Date": d(3),  "Description": "Hotstar Premium",              "Amount": -299,                             "Type": "DEBIT"},
+            {"Date": d(3),  "Description": "Spotify Premium",              "Amount": -119,                             "Type": "DEBIT"},
+            {"Date": d(4),  "Description": "YouTube Premium",              "Amount": -189,                             "Type": "DEBIT"},
+            {"Date": d(4),  "Description": "Apple One Subscription",       "Amount": -1095,                            "Type": "DEBIT"},
+            {"Date": d(5),  "Description": "Tata Play DTH Pack",           "Amount": -649,                             "Type": "DEBIT"},
+            {"Date": d(5),  "Description": "Airtel Postpaid Bill",         "Amount": -(1299 + (m_idx % 3) * 200),      "Type": "DEBIT"},
+            {"Date": d(6),  "Description": "Airtel Xstream Fiber",         "Amount": -1499,                            "Type": "DEBIT"},
+            {"Date": d(6),  "Description": "Cult.fit Membership",          "Amount": -1999,                            "Type": "DEBIT"},
+            {"Date": d(7),  "Description": "Audible Subscription",         "Amount": -199,                             "Type": "DEBIT"},
+
+            # Groceries (4 stores, growing over months)
+            {"Date": d(8),  "Description": "Big Bazaar Groceries",         "Amount": -(4200 + m_idx * 150),            "Type": "DEBIT"},
+            {"Date": d(14), "Description": "DMart Groceries",              "Amount": -(3600 + m_idx * 120),            "Type": "DEBIT"},
+            {"Date": d(21), "Description": "Blinkit Groceries",            "Amount": -(2500 + m_idx * 100),            "Type": "DEBIT"},
+            {"Date": d(27), "Description": "Zepto Groceries",              "Amount": -(1400 + m_idx * 80),             "Type": "DEBIT"},
+
+            # Fuel — two cars
+            {"Date": d(9),  "Description": "Petrol Pump HPCL",             "Amount": -(4800 + m_idx * 100),            "Type": "DEBIT"},
+            {"Date": d(22), "Description": "Petrol Pump HPCL",             "Amount": -(3400 + m_idx * 80),             "Type": "DEBIT"},
+
+            # Utilities
+            {"Date": d(10), "Description": "Electricity Bill BESCOM",      "Amount": -(3800 + m_idx * 100),            "Type": "DEBIT"},
+            {"Date": d(11), "Description": "Society Maintenance Charge",   "Amount": -3500,                            "Type": "DEBIT"},
+            {"Date": d(12), "Description": "Piped Gas Bill",               "Amount": -(680 + m_idx * 20),              "Type": "DEBIT"},
+
+            # Food delivery — heavy user, 6 orders/month
+            {"Date": d(8),  "Description": "Swiggy Order #SW1001",         "Amount": -(680 + m_idx * 30),              "Type": "DEBIT"},
+            {"Date": d(11), "Description": "Zomato Order #ZM2201",         "Amount": -(820 + m_idx * 25),              "Type": "DEBIT"},
+            {"Date": d(15), "Description": "Swiggy Order #SW1042",         "Amount": -(560 + m_idx * 20),              "Type": "DEBIT"},
+            {"Date": d(19), "Description": "Zomato Order #ZM3312",         "Amount": -(940 + m_idx * 30),              "Type": "DEBIT"},
+            {"Date": d(23), "Description": "Swiggy Instamart",             "Amount": -(480 + m_idx * 15),              "Type": "DEBIT"},
+            {"Date": d(26), "Description": "Swiggy Order #SW1098",         "Amount": -(760 + m_idx * 25),              "Type": "DEBIT"},
+
+            # Health
+            {"Date": d(13), "Description": "Apollo Pharmacy",              "Amount": -(1600 + m_idx * 60),             "Type": "DEBIT"},
+            {"Date": d(25), "Description": "Practo Consultation",          "Amount": -499,                             "Type": "DEBIT"},
+
+            # Entertainment
+            {"Date": d(16), "Description": "BookMyShow Movies",            "Amount": -(1400 + m_idx * 50),             "Type": "DEBIT"},
+            {"Date": d(24), "Description": "PVR Cinemas",                  "Amount": -(1100 + m_idx * 30),             "Type": "DEBIT"},
+
+            # UPI — local vendors (ambiguous, great for UPI tagging demo)
+            {"Date": d(9),  "Description": "UPI/9876543210@ybl",           "Amount": -(1600 + m_idx * 50),             "Type": "DEBIT"},
+            {"Date": d(13), "Description": "UPI/PAYTM/QRCODE/7654321",    "Amount": -(2100 + m_idx * 60),             "Type": "DEBIT"},
+            {"Date": d(17), "Description": "UPI/PHONEPE/TXN/5432109",     "Amount": -(1000 + m_idx * 40),             "Type": "DEBIT"},
+            {"Date": d(22), "Description": "UPI/8765432109@okaxis",        "Amount": -(2800 + m_idx * 70),             "Type": "DEBIT"},
+            {"Date": d(28), "Description": "UPI/GPAY/MERCHANT/3210987",   "Amount": -(850 + m_idx * 30),              "Type": "DEBIT"},
         ]
 
-        # Credit card transactions
+        # ── CREDIT CARD (online shopping + travel — the big spend) ──
         cc_rows += [
-            {"Date": d(2), "Description": "Amazon Purchase", "Amount": -(5200 + m_idx * 300), "Type": "DEBIT"},
-            {"Date": d(4), "Description": "Myntra Purchase", "Amount": -(3200 + m_idx * 220), "Type": "DEBIT"},
-            {"Date": d(6), "Description": "Flipkart Purchase", "Amount": -(2400 + m_idx * 150), "Type": "DEBIT"},
-            {"Date": d(8), "Description": "Ajio Purchase", "Amount": -(2500 + m_idx * 140), "Type": "DEBIT"},
-            {"Date": d(10), "Description": "Swiggy Order", "Amount": -(410 + m_idx * 18), "Type": "DEBIT"},
-            {"Date": d(11), "Description": "Uber Ride", "Amount": -(220 + m_idx * 10), "Type": "DEBIT"},
-            {"Date": d(12), "Description": "UPI/7766554433@paytm", "Amount": -(480 + m_idx * 20), "Type": "DEBIT"},
-            {"Date": d(14), "Description": "Nykaa Purchase", "Amount": -(1800 + m_idx * 120), "Type": "DEBIT"},
-            {"Date": d(16), "Description": "Amazon Purchase", "Amount": -(3600 + m_idx * 250), "Type": "DEBIT"},
-            {"Date": d(18), "Description": "UPI/GPAY/MERCHANT/6655443", "Amount": -(390 + m_idx * 15), "Type": "DEBIT"},
-            {"Date": d(20), "Description": "MakeMyTrip Flight", "Amount": -(11000 + m_idx * 400), "Type": "DEBIT"},
-            {"Date": d(22), "Description": "BigBasket Groceries", "Amount": -(2900 + m_idx * 120), "Type": "DEBIT"},
-            {"Date": d(24), "Description": "Zomato Order", "Amount": -(500 + m_idx * 16), "Type": "DEBIT"},
-            {"Date": d(26), "Description": "Petrol Pump BPCL", "Amount": -(3800 + m_idx * 110), "Type": "DEBIT"},
-            {"Date": d(28), "Description": "UPI/5544332211@okaxis", "Amount": -(440 + m_idx * 15), "Type": "DEBIT"},
+            # Amazon — 3 orders/month, substantial
+            {"Date": d(2),  "Description": "Amazon Purchase",              "Amount": -(8500 + m_idx * 500),            "Type": "DEBIT"},
+            {"Date": d(12), "Description": "Amazon Purchase",              "Amount": -(5200 + m_idx * 300),            "Type": "DEBIT"},
+            {"Date": d(24), "Description": "Amazon Purchase",              "Amount": -(4100 + m_idx * 250),            "Type": "DEBIT"},
+
+            # Fashion
+            {"Date": d(3),  "Description": "Myntra Purchase",              "Amount": -(6200 + m_idx * 400),            "Type": "DEBIT"},
+            {"Date": d(18), "Description": "Myntra Purchase",              "Amount": -(3800 + m_idx * 250),            "Type": "DEBIT"},
+            {"Date": d(5),  "Description": "Flipkart Purchase",            "Amount": -(4800 + m_idx * 300),            "Type": "DEBIT"},
+            {"Date": d(21), "Description": "Flipkart Purchase",            "Amount": -(2900 + m_idx * 200),            "Type": "DEBIT"},
+            {"Date": d(8),  "Description": "Ajio Purchase",                "Amount": -(3500 + m_idx * 250),            "Type": "DEBIT"},
+            {"Date": d(14), "Description": "Nykaa Purchase",               "Amount": -(2800 + m_idx * 180),            "Type": "DEBIT"},
+            {"Date": d(20), "Description": "Nykaa Purchase",               "Amount": -(2100 + m_idx * 130),            "Type": "DEBIT"},
+
+            # Travel — flight + hotel every month
+            {"Date": d(4),  "Description": "MakeMyTrip Flight Booking",    "Amount": -(12500 + m_idx * 600),           "Type": "DEBIT"},
+            {"Date": d(15), "Description": "MakeMyTrip Hotel Booking",     "Amount": -(9800 + m_idx * 400),            "Type": "DEBIT"},
+            {"Date": d(23), "Description": "IRCTC Train Booking",          "Amount": -(2400 + m_idx * 100),            "Type": "DEBIT"},
+
+            # Food on card
+            {"Date": d(7),  "Description": "Swiggy Order",                 "Amount": -(900 + m_idx * 40),              "Type": "DEBIT"},
+            {"Date": d(16), "Description": "Zomato Order",                 "Amount": -(750 + m_idx * 30),              "Type": "DEBIT"},
+            {"Date": d(26), "Description": "Swiggy Order",                 "Amount": -(680 + m_idx * 25),              "Type": "DEBIT"},
+
+            # Fuel on card
+            {"Date": d(6),  "Description": "Petrol Pump BPCL",             "Amount": -(4200 + m_idx * 150),            "Type": "DEBIT"},
+            {"Date": d(27), "Description": "Petrol Pump BPCL",             "Amount": -(3100 + m_idx * 100),            "Type": "DEBIT"},
+
+            # Rides
+            {"Date": d(9),  "Description": "Uber Ride",                    "Amount": -(580 + m_idx * 20),              "Type": "DEBIT"},
+            {"Date": d(19), "Description": "Uber Ride",                    "Amount": -(440 + m_idx * 15),              "Type": "DEBIT"},
+            {"Date": d(25), "Description": "Ola Ride",                     "Amount": -(360 + m_idx * 10),              "Type": "DEBIT"},
+
+            # UPI on card
+            {"Date": d(11), "Description": "UPI/7766554433@paytm",        "Amount": -(1900 + m_idx * 60),             "Type": "DEBIT"},
+            {"Date": d(20), "Description": "UPI/GPAY/MERCHANT/6655443",   "Amount": -(1400 + m_idx * 45),             "Type": "DEBIT"},
+            {"Date": d(28), "Description": "UPI/5544332211@okaxis",       "Amount": -(1100 + m_idx * 35),             "Type": "DEBIT"},
+
+            # Big ticket (occasional)
+            {"Date": d(13), "Description": "Croma Electronics",            "Amount": -18500 if m_idx % 3 == 0 else 0,  "Type": "DEBIT"},
+            {"Date": d(26), "Description": "Apple Store Purchase",         "Amount": -12999 if m_idx == 2 else 0,      "Type": "DEBIT"},
         ]
 
     bank_df = pd.DataFrame([r for r in bank_rows if r["Amount"] != 0])
-    cc_df = pd.DataFrame(cc_rows)
+    cc_df   = pd.DataFrame([r for r in cc_rows   if r["Amount"] != 0])
     return bank_df.to_csv(index=False), cc_df.to_csv(index=False)
 
 
