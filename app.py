@@ -145,7 +145,7 @@ section[data-testid="stSidebar"]{display:none}
 .iq-eyebrow{font-size:.7rem;font-weight:500;letter-spacing:.3em;text-transform:uppercase;color:var(--muted)}
 .iq-hero{font-family:'Playfair Display',serif;font-size:clamp(3.2rem,6vw,5rem);font-weight:400;line-height:1;color:var(--text);letter-spacing:-.01em}
 .iq-hero em{font-style:italic;color:var(--accent)}
-.iq-sub{font-size:1rem;font-weight:300;color:var(--muted);line-height:1.8}
+.iq-sub{font-size:1rem;font-weight:400;color:#9FB0D3;line-height:1.8}
 .iq-label{font-size:.68rem;font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:var(--muted2);margin-bottom:1.25rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)}
 
 /* ── Layout ── */
@@ -169,7 +169,7 @@ section[data-testid="stSidebar"]{display:none}
 .bank-tile.selected{border-color:var(--accent);background:var(--bg3);box-shadow:0 0 0 1px var(--accent) inset}
 .bank-logo{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem;letter-spacing:.05em}
 .bank-logo-text{font-size:.78rem;font-weight:700;letter-spacing:.08em;color:#E2E8F4;line-height:1;text-align:center}
-.bank-name-text{font-size:.78rem;font-weight:400;color:var(--muted);letter-spacing:.05em}
+.bank-name-text{font-size:.82rem;font-weight:500;color:#C7D3EE;letter-spacing:.04em}
 .bank-selected-badge{font-size:.55rem;letter-spacing:.15em;color:var(--accent);font-weight:600;text-transform:uppercase}
 
 /* ── Consent ── */
@@ -443,12 +443,8 @@ elif st.session_state.flow_step == "bank_select":
             sel_class = "selected" if is_sel else ""
             st.markdown(f"""
             <div class="bank-tile {sel_class}">
-                <div class="bank-logo-wrap" style="background:{bank['bg']};border:1px solid {bank['color']}44;border-radius:12px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;overflow:hidden">
-                    <img src="{bank['logo']}" 
-                         style="width:36px;height:36px;object-fit:contain;border-radius:6px"
-                         onerror="this.style.display='none';this.nextSibling.style.display='flex'"
-                         alt="{bank['name']}">
-                    <div style="display:none;width:36px;height:36px;align-items:center;justify-content:center;font-weight:700;font-size:.62rem;color:{bank['color']};letter-spacing:.05em">{bank['abbr']}</div>
+                <div class="bank-logo-wrap" style="background:{bank['bg']};border:1px solid {bank['color']}55;border-radius:12px;width:56px;height:56px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(0,0,0,.22)">
+                    <div class="bank-logo-text" style="color:{bank['color']};font-size:.7rem;">{bank['abbr']}</div>
                 </div>
                 <div class="bank-name-text">{bank['name']}</div>
                 {sel_badge}
@@ -483,7 +479,7 @@ elif st.session_state.flow_step == "card_select":
         with (c1 if i % 2 == 0 else c2):
             if st.checkbox(card, key=f"card_{card}", value=(card in st.session_state.owned_cards)):
                 owned.append(card)
-                st.markdown(f'<div class="iq-sub" style="font-size:.68rem;margin:-.4rem 0 .6rem 1.8rem;color:#4A3728">{CARD_BENEFITS[card]["note"]}</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="iq-sub" style="font-size:.68rem;margin:-.4rem 0 .6rem 1.8rem;color:#AEBCE0">{CARD_BENEFITS[card]["note"]}</div>', unsafe_allow_html=True)
     st.session_state.owned_cards = owned
 
     st.markdown('<div style="height:2rem"></div>', unsafe_allow_html=True)
@@ -510,7 +506,7 @@ elif st.session_state.flow_step == "consent":
             <div class="consent-row"><span class="consent-icon">✦</span><div class="consent-txt"><strong>No credentials shared</strong> — CardIQ never sees your PIN, password, or OTP.</div></div>
             <div class="consent-row" style="border:none"><span class="consent-icon">✦</span><div class="consent-txt"><strong>One-time consent</strong> — Access expires after this session. Revoke anytime from your bank app.</div></div>
             <div style="margin-top:1.5rem;padding:1rem;background:#080C14;border:1px solid #1E2A3F">
-                <div class="iq-sub" style="font-size:.78rem;color:#2A3855">This consent is governed by the RBI Account Aggregator framework under NBFC-AA regulations. CardIQ is a registered Financial Information User (FIU).</div>
+                <div class="iq-sub" style="font-size:.78rem;color:#7F93BF">This consent is governed by the RBI Account Aggregator framework under NBFC-AA regulations. CardIQ is a registered Financial Information User (FIU).</div>
             </div></div>""", unsafe_allow_html=True)
         st.markdown('<div style="height:1.5rem"></div>', unsafe_allow_html=True)
         cb1, cb2 = st.columns(2)
@@ -595,9 +591,9 @@ elif st.session_state.flow_step == "upi_review":
 
     # Column headers
     st.markdown("""<div class="upi-row" style="border-bottom:1px solid #1A1410">
-        <span style="font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:#2A3855">UPI ID &nbsp;·&nbsp; Date</span>
-        <span style="font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:#2A3855;text-align:right">Amount</span>
-        <span style="font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:#2A3855">Category</span>
+        <span style="font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:#7F93BF">UPI ID &nbsp;·&nbsp; Date</span>
+        <span style="font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:#7F93BF;text-align:right">Amount</span>
+        <span style="font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:#7F93BF">Category</span>
     </div>""", unsafe_allow_html=True)
 
     # One row per UPI transaction
@@ -701,7 +697,7 @@ elif st.session_state.flow_step == "results":
         <div style="display:flex;gap:1.5rem;align-items:center">
             {"".join([f'<span class="account-badge">{c}</span>' for c in (st.session_state.owned_cards or ["No cards"])])}
         </div>
-        <div class="iq-eyebrow" style="color:#2A3855">{tagged_count} UPI payments tagged &nbsp;·&nbsp; March 2024</div>
+        <div class="iq-eyebrow" style="color:#7F93BF">{tagged_count} UPI payments tagged &nbsp;·&nbsp; March 2024</div>
     </div>""", unsafe_allow_html=True)
 
     st.markdown('<div class="iq-body">', unsafe_allow_html=True)
@@ -735,7 +731,7 @@ elif st.session_state.flow_step == "results":
                 pct = int(amt/total*100)
                 st.markdown(f"""<div class="iq-row">
                     <span class="iq-row-cat">{cat}</span>
-                    <span style="font-family:'Playfair Display',serif;font-size:1.2rem;color:#2A3855">{pct}%</span>
+                    <span style="font-family:'Playfair Display',serif;font-size:1.2rem;color:#7F93BF">{pct}%</span>
                     <span class="iq-row-val">₹{amt:,.0f}</span></div>""", unsafe_allow_html=True)
         if subs:
             st.markdown('<div style="height:2rem"></div>', unsafe_allow_html=True)
@@ -756,19 +752,19 @@ elif st.session_state.flow_step == "results":
         opt = r.get("card_optimizer",[])
         total_s = r.get("total_potential_savings",0)
         st.markdown(f"""<div style="padding:2rem 0 2.5rem">
-            <div class="iq-eyebrow" style="color:#2A3855;margin-bottom:.6rem">This month, you left unclaimed</div>
+            <div class="iq-eyebrow" style="color:#7F93BF;margin-bottom:.6rem">This month, you left unclaimed</div>
             <div style="font-family:'Playfair Display',serif;font-size:4.8rem;font-weight:300;color:#6C8EF5;line-height:1">₹{total_s:,.0f}</div>
             <div class="iq-sub" style="margin-top:.6rem">Annualised — ₹{int(total_s*12):,.0f} in rewards you never received.</div></div>""", unsafe_allow_html=True)
         if opt:
             st.markdown('<div class="iq-label">By Category</div>', unsafe_allow_html=True)
             st.markdown("""<div class="iq-row">
-                <span class="iq-row-cat" style="color:#2A3855;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase">Category</span>
-                <span class="iq-row-card" style="color:#2A3855;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase">Optimal Card</span>
-                <span class="iq-row-val" style="color:#2A3855;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase">You Save</span></div>""", unsafe_allow_html=True)
+                <span class="iq-row-cat" style="color:#7F93BF;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase">Category</span>
+                <span class="iq-row-card" style="color:#7F93BF;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase">Optimal Card</span>
+                <span class="iq-row-val" style="color:#7F93BF;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase">You Save</span></div>""", unsafe_allow_html=True)
             for item in sorted(opt, key=lambda x:-x.get("potential_savings",0)):
                 if item.get("potential_savings",0) > 0:
                     st.markdown(f"""<div class="iq-row">
-                        <span class="iq-row-cat">{item['category']}<br><span style="font-size:.78rem;color:#2A3855">₹{item['spend']:,.0f} spent</span></span>
+                        <span class="iq-row-cat">{item['category']}<br><span style="font-size:.78rem;color:#7F93BF">₹{item['spend']:,.0f} spent</span></span>
                         <span class="iq-row-card">{item['best_card']}<br><span style="font-size:.78rem;color:#4A5A7A">{item['best_rate']}% cashback</span></span>
                         <span class="iq-row-val">₹{item['potential_savings']:,.0f}</span></div>""", unsafe_allow_html=True)
 
