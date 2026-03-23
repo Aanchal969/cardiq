@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 from openai import OpenAI
-import json, re, time
+import json, re, time, os
 from io import StringIO
 
 st.set_page_config(page_title="CardIQ", page_icon="✦", layout="wide", initial_sidebar_state="collapsed")
@@ -89,14 +89,14 @@ SAMPLE_CC_CSV = """Date,Description,Amount,Type
 # CONSTANTS
 # ══════════════════════════════════════════════════════════════
 BANKS = [
-    {"name":"HDFC Bank",  "abbr":"HDFC",  "color":"#004C8F","bg":"#001E3C","logo":"https://logo.clearbit.com/hdfcbank.com"},
-    {"name":"ICICI Bank", "abbr":"ICICI", "color":"#F96B21","bg":"#2D1400","logo":"https://logo.clearbit.com/icicibank.com"},
-    {"name":"SBI",        "abbr":"SBI",   "color":"#2251A3","bg":"#0D1B3E","logo":"https://logo.clearbit.com/sbi.co.in"},
-    {"name":"Axis Bank",  "abbr":"AXIS",  "color":"#97144D","bg":"#2D0518","logo":"https://logo.clearbit.com/axisbank.com"},
-    {"name":"Kotak Bank", "abbr":"KOTAK", "color":"#EF4123","bg":"#2D0A00","logo":"https://logo.clearbit.com/kotak.com"},
-    {"name":"IndusInd",   "abbr":"INDUS", "color":"#00529B","bg":"#001E3C","logo":"https://logo.clearbit.com/indusind.com"},
-    {"name":"Yes Bank",   "abbr":"YES",   "color":"#00447C","bg":"#001829","logo":"https://logo.clearbit.com/yesbank.in"},
-    {"name":"IDFC First", "abbr":"IDFC",  "color":"#9B1B30","bg":"#2D0810","logo":"https://logo.clearbit.com/idfcfirstbank.com"},
+    {"name":"HDFC Bank",  "abbr":"HDFC",  "color":"#004C8F","bg":"#001E3C"},
+    {"name":"ICICI Bank", "abbr":"ICICI", "color":"#F96B21","bg":"#2D1400"},
+    {"name":"SBI",        "abbr":"SBI",   "color":"#2251A3","bg":"#0D1B3E"},
+    {"name":"Axis Bank",  "abbr":"AXIS",  "color":"#97144D","bg":"#2D0518"},
+    {"name":"Kotak Bank", "abbr":"KOTAK", "color":"#EF4123","bg":"#2D0A00"},
+    {"name":"IndusInd",   "abbr":"INDUS", "color":"#00529B","bg":"#001E3C"},
+    {"name":"Yes Bank",   "abbr":"YES",   "color":"#00447C","bg":"#001829"},
+    {"name":"IDFC First", "abbr":"IDFC",  "color":"#9B1B30","bg":"#2D0810"},
 ]
 
 CATEGORIES = ["Food Delivery","Groceries","Online Shopping","Travel",
@@ -168,6 +168,7 @@ section[data-testid="stSidebar"]{display:none}
 .bank-tile:hover{border-color:var(--border2);background:var(--bg3)}
 .bank-tile.selected{border-color:var(--accent);background:var(--bg3);box-shadow:0 0 0 1px var(--accent) inset}
 .bank-logo{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem;letter-spacing:.05em}
+.bank-logo-text{font-size:.78rem;font-weight:700;letter-spacing:.08em;color:#E2E8F4;line-height:1;text-align:center}
 .bank-name-text{font-size:.78rem;font-weight:400;color:var(--muted);letter-spacing:.05em}
 .bank-selected-badge{font-size:.55rem;letter-spacing:.15em;color:var(--accent);font-weight:600;text-transform:uppercase}
 
@@ -244,6 +245,13 @@ div[data-testid="stFileUploader"]{background:var(--bg2)!important;border:1px sol
 # ══════════════════════════════════════════════════════════════
 # HELPERS
 # ══════════════════════════════════════════════════════════════
+def get_default_api_key():
+    try:
+        secret_key = st.secrets.get("OPENAI_API_KEY", "")
+    except Exception:
+        secret_key = ""
+    return secret_key or os.getenv("OPENAI_API_KEY", "")
+
 def parse_csv_string(csv_string):
     df = pd.read_csv(StringIO(csv_string))
     df.columns = [c.strip() for c in df.columns]
@@ -354,7 +362,7 @@ defaults = {
     "analysis": None,
     "context": "",
     "chat_history": [],
-    "api_key": "",
+    "api_key": get_default_api_key(),
 }
 for k, v in defaults.items():
     if k not in st.session_state:
@@ -375,9 +383,21 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-with st.expander("✦  CONNECT  —  Enter OpenAI API Key"):
-    api_input = st.text_input("", type="password", placeholder="sk-...", value=st.session_state.api_key, label_visibility="collapsed")
-    if api_input: st.session_state.api_key = api_input
+default_api_key = get_default_api_key()
+if default_api_key:
+    st.session_state.api_key = default_api_key
+    st.markdown("""
+    <div style="padding:.9rem 5rem;background:#0D1220;border-bottom:1px solid #1E2A3F;display:flex;justify-content:space-between;align-items:center">
+        <div class="iq-eyebrow">OpenAI Connected</div>
+        <div class="iq-sub" style="font-size:.7rem">API key loaded securely from secrets / environment</div>
+    </div>
+    """, unsafe_allow_html=True)
+else:
+    with st.expander("✦  CONNECT  —  Enter OpenAI API Key"):
+        st.markdown('<div class="iq-sub" style="font-size:.8rem;margin-bottom:.75rem">For a no-paste demo, add <span style="color:#6C8EF5">OPENAI_API_KEY</span> in Streamlit secrets or your environment variables.</div>', unsafe_allow_html=True)
+        api_input = st.text_input("", type="password", placeholder="sk-...", value=st.session_state.api_key, label_visibility="collapsed")
+        if api_input:
+            st.session_state.api_key = api_input
 st.markdown('<div class="iq-divider"></div>', unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════
