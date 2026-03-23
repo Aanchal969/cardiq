@@ -145,7 +145,7 @@ section[data-testid="stSidebar"]{display:none}
 /* ── Layout ── */
 .iq-hero-wrap{padding:2.5rem 5rem 2rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;position:relative;overflow:hidden}
 .iq-hero-wrap::before{content:'';position:absolute;top:-60px;right:5rem;width:360px;height:360px;background:radial-gradient(circle,rgba(108,142,245,.08) 0%,transparent 70%);pointer-events:none}
-.iq-body{padding:2rem 5rem}
+.iq-body{padding:2rem 5rem;overflow:hidden}
 .iq-divider{height:1px;background:var(--border)}
 
 /* ── Cards ── */
@@ -205,8 +205,8 @@ section[data-testid="stSidebar"]{display:none}
 .iq-row-val{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:400;color:var(--text);text-align:right;min-width:90px}
 .iq-sub-tag{display:inline-flex;align-items:center;gap:.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:.35rem .9rem;margin:.25rem;font-size:.82rem;color:var(--muted)}
 .iq-sub-tag span{color:var(--green);font-weight:500}
-.iq-chat-user{text-align:right;padding:.6rem 0;font-family:'Playfair Display',serif;font-size:1rem;font-style:italic;color:var(--muted)}
-.iq-chat-ai{padding:.9rem 0 .9rem 1.4rem;border-left:2px solid var(--border2);font-size:1rem;color:var(--text);line-height:1.75;font-weight:400;margin-bottom:.4rem}
+.iq-chat-user{text-align:right;padding:.6rem 0;font-family:'Playfair Display',serif;font-size:1rem;font-style:italic;color:var(--muted);word-wrap:break-word;overflow-wrap:break-word;max-width:100%}
+.iq-chat-ai{padding:.9rem 0 .9rem 1.4rem;border-left:2px solid var(--border2);font-size:1rem;color:var(--text);line-height:1.75;font-weight:400;margin-bottom:.4rem;word-wrap:break-word;overflow-wrap:break-word;white-space:normal;max-width:100%}
 .account-badge{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);background:rgba(108,142,245,.1);border:1px solid rgba(108,142,245,.25);border-radius:4px;padding:.25rem .65rem}
 
 /* ── Inputs ── */
@@ -604,32 +604,38 @@ Rules:
     return json.loads(raw)
 
 
-def chat_with_data(client, question, context, user_profile=None):
-    prompt = f"""You are CardIQ, a sharp and direct AI financial copilot. You talk like a knowledgeable friend, not a consultant writing a report.
+def chat_with_data(client, question, context, user_profile=None, chat_history=None):
+    system_prompt = f"""You are CardIQ, a sharp and direct AI financial copilot. You talk like a knowledgeable friend, not a consultant writing a report.
 
 Rules:
-- Match your format to the question. Short question = short answer. Complex trade-off = slightly longer. Never use rigid headers like "Current State", "Best Recommendation", "Why It Helps", "One Next Step" — these feel robotic.
-- Use plain conversational prose. Use bullet points only when listing multiple specific items (e.g. a list of subscriptions to cancel). Never use numbered sections.
-- Be specific — name exact amounts, cards, merchants, subscriptions from the data. Never be vague.
+- You have access to the full conversation history. Do NOT repeat what you've already said. Build on it.
+- If the user is drilling deeper into something you already covered, go deeper — don't restate the summary.
+- Match your format to the question. Short question = short answer. Never use rigid headers.
+- Use plain conversational prose. Bullets only when listing multiple specific items.
+- Be specific — name exact amounts, cards, merchants from the data. Never be vague.
 - Lead with the answer. Don't build up to it.
-- If the question is simple ("where am I overspending?"), answer in 2-4 sentences. Don't pad it.
-- If the question needs a trade-off or recommendation, state your recommendation first, then briefly explain why.
-- Use the user's preferences from their profile if available.
+- If you already recommended HDFC Millennia, don't recommend it again unless the user asks about it specifically.
 - Don't push new spend categories. Optimize what they already do.
-- If you're working from usage patterns rather than complete fee data, say so in one short parenthetical.
 
 USER PROFILE:
 {format_profile(user_profile or {})}
 
-DATA:
-{context}
+FINANCIAL DATA:
+{context}"""
 
-QUESTION:
-{question}
-"""
+    messages = [{"role": "system", "content": system_prompt}]
+
+    # Include prior conversation so GPT knows what's already been said
+    if chat_history:
+        for msg in chat_history[:-1]:  # exclude the current question, already added below
+            messages.append({"role": msg["role"] if msg["role"] != "assistant" else "assistant",
+                             "content": msg["content"]})
+
+    messages.append({"role": "user", "content": question})
+
     response = client.chat.completions.create(
         model="gpt-4o",
-        messages=[{"role":"user","content":prompt}],
+        messages=messages,
         temperature=0.5,
         max_tokens=400,
     )
@@ -1130,7 +1136,7 @@ elif st.session_state.flow_step == "results":
                     st.session_state.user_profile = update_profile_from_reply(client, st.session_state.pending_clarification, message, st.session_state.user_profile)
                     original_question = st.session_state.pending_clarification.get("question", "")
                     st.session_state.data_context = build_data_context(st.session_state.analysis, st.session_state.all_debits, st.session_state.owned_cards or list(CARD_BENEFITS.keys())[:3], st.session_state.user_profile)
-                    answer = chat_with_data(client, original_question, st.session_state.data_context, st.session_state.user_profile)
+                    answer = chat_with_data(client, original_question, st.session_state.data_context, st.session_state.user_profile, st.session_state.chat_history)
                     st.session_state.pending_clarification = None
                 else:
                     clarification = needs_clarification(message, st.session_state.user_profile)
@@ -1139,7 +1145,7 @@ elif st.session_state.flow_step == "results":
                         st.session_state.pending_clarification = clarification
                     else:
                         st.session_state.data_context = build_data_context(st.session_state.analysis, st.session_state.all_debits, st.session_state.owned_cards or list(CARD_BENEFITS.keys())[:3], st.session_state.user_profile)
-                        answer = chat_with_data(client, message, st.session_state.data_context, st.session_state.user_profile)
+                        answer = chat_with_data(client, message, st.session_state.data_context, st.session_state.user_profile, st.session_state.chat_history)
 
                 st.session_state.chat_history.append({"role":"assistant","content":answer})
                 st.rerun()
